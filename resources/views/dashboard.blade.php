@@ -1,39 +1,44 @@
 <x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            Community Feed
-        </h2>
-    </x-slot>
 
-    <div class="py-12">
-        <div class="max-w-5xl mx-auto sm:px-6 lg:px-8">
+<div style="padding:2rem 2.5rem 3rem;max-width:1100px;">
 
-            {{-- KPI Strip --}}
-            <div class="grid grid-cols-3 gap-4 mb-6">
-                <div class="bg-white rounded-xl shadow p-5">
-                    <div class="text-sm text-gray-500">Total Posts</div>
-                    <div class="text-3xl font-bold text-indigo-600 mt-1">{{ $totalPosts }}</div>
-                </div>
-                <div class="bg-white rounded-xl shadow p-5">
-                    <div class="text-sm text-gray-500">Communities</div>
-                    <div class="text-3xl font-bold text-purple-600 mt-1">{{ $totalCommunities }}</div>
-                </div>
-                <div class="bg-white rounded-xl shadow p-5">
-                    <div class="text-sm text-gray-500">My Points</div>
-                    <div class="text-3xl font-bold text-amber-500 mt-1">{{ $myPoints }}</div>
-                </div>
-            </div>
-
-            {{-- Create Post --}}
-            <livewire:pulse.create-post />
-
-            {{-- Feed --}}
-            <livewire:pulse.home-feed />
-
-            {{-- Communities --}}
-            <div class="mt-6">
-                <livewire:pulse.community-list />
-            </div>
+    {{-- Header --}}
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:2rem;">
+        <div>
+            <h1 style="font-family:'Syne',sans-serif;font-size:1.5rem;font-weight:700;color:#f4f4f5;margin:0 0 0.2rem;letter-spacing:-0.01em;">Community Feed</h1>
+            <p style="font-size:0.78rem;color:#52525b;margin:0;">What's happening across the ecosystem</p>
         </div>
     </div>
+
+    {{-- KPI Strip --}}
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-bottom:2rem;">
+        <div class="dot-card" style="padding:1.25rem 1.5rem;">
+            <div style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.09em;color:#52525b;margin-bottom:0.75rem;">Total Posts</div>
+            <div class="metric-val" style="font-size:2rem;font-weight:600;color:var(--accent);">{{ $totalPosts }}</div>
+        </div>
+        <div class="dot-card" style="padding:1.25rem 1.5rem;">
+            <div style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.09em;color:#52525b;margin-bottom:0.75rem;">Communities</div>
+            <div class="metric-val" style="font-size:2rem;font-weight:600;color:var(--accent);">{{ $totalCommunities }}</div>
+        </div>
+        <div class="dot-card" style="padding:1.25rem 1.5rem;">
+            <div style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.09em;color:#52525b;margin-bottom:0.75rem;">My Points</div>
+            <div class="metric-val" style="font-size:2rem;font-weight:600;color:#f59e0b;">{{ $myPoints }}</div>
+        </div>
+    </div>
+
+    {{-- Create Post --}}
+    <livewire:pulse.create-post />
+
+    {{-- Feed --}}
+    <div style="margin-top:1.25rem;">
+        <livewire:pulse.home-feed />
+    </div>
+
+    {{-- Communities --}}
+    <div style="margin-top:1.5rem;">
+        <livewire:pulse.community-list />
+    </div>
+
+</div>
+
 </x-app-layout>

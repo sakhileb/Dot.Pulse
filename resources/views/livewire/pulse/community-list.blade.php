@@ -1,6 +1,6 @@
-<div class="bg-white rounded-xl shadow p-6">
+<div class="dot-card" style="padding:1.5rem;">
     <div class="flex items-center justify-between mb-4">
-        <h3 class="text-lg font-semibold text-gray-800">Communities</h3>
+        <h3 style="font-family:'Syne',sans-serif;font-size:0.875rem;font-weight:700;color:#f4f4f5;">Communities</h3>
         <input
             wire:model.live="search"
             type="text"
