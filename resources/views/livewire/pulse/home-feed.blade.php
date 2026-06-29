@@ -1,7 +1,7 @@
 <div>
     <div class="flex items-center justify-between mb-4">
-        <h3 class="text-lg font-semibold text-gray-800">Community Feed</h3>
-        <select wire:model.live="filterType" class="border border-gray-300 rounded text-xs px-2 py-1">
+        <h3 style="font-family:'Syne',sans-serif;font-size:0.875rem;font-weight:700;color:#f4f4f5;">Community Feed</h3>
+        <select wire:model.live="filterType" class="dot-input" style="font-size:11px;padding:4px 8px;width:auto;">
             <option value="">All types</option>
             @foreach(\App\Models\PulsePost::$types as $type)
                 <option value="{{ $type }}">{{ ucfirst(str_replace('_', ' ', $type)) }}</option>
@@ -16,7 +16,7 @@
     @else
         <div class="space-y-4">
             @foreach($this->posts as $post)
-                <div class="bg-white rounded-xl shadow p-5">
+                <div class="dot-card" style="padding:1.25rem 1.5rem;">
                     <div class="flex items-start gap-3">
                         <div class="w-9 h-9 rounded-full bg-indigo-500 flex items-center justify-center text-white text-sm font-bold shrink-0">
                             {{ strtoupper(substr($post->author->name, 0, 1)) }}
