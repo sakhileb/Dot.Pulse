@@ -131,6 +131,13 @@ PROMPT;
 
         if ($enrichment->moderation_status === 'approved' && $post->status === 'pending') {
             $post->update(['status' => 'published']);
+            \App\Events\PostPublished::dispatch($post->load('author'));
+            // Extract knowledge graph asynchronously (best-effort)
+            try {
+                app(\App\Services\KnowledgeGraphService::class)->extractFromPost($post, $enrichment);
+            } catch (\Throwable) {
+                // Non-fatal — graph extraction never blocks publishing
+            }
         } elseif ($enrichment->moderation_status === 'rejected') {
             $post->update(['status' => 'removed']);
         }

@@ -1,6 +1,6 @@
 <div>
-    <div class="flex items-center justify-between mb-4">
-        <h3 style="font-family:'Syne',sans-serif;font-size:0.875rem;font-weight:700;color:#f4f4f5;">Community Feed</h3>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;">
+        <h3 style="font-family:'Syne',sans-serif;font-size:0.875rem;font-weight:700;color:#f4f4f5;margin:0;">Community Feed</h3>
         <select wire:model.live="filterType" class="dot-input" style="font-size:11px;padding:4px 8px;width:auto;">
             <option value="">All types</option>
             @foreach(\App\Models\PulsePost::$types as $type)
@@ -10,64 +10,68 @@
     </div>
 
     @if($this->posts->isEmpty())
-        <div class="text-center py-16 text-gray-400">
-            <p class="text-sm">No posts yet. Be the first to share something with the community.</p>
+        <div style="text-align:center;padding:4rem 1rem;color:#3f3f46;">
+            <span class="material-symbols-rounded" style="font-size:40px;display:block;margin-bottom:0.5rem;">forum</span>
+            <p style="font-size:13px;">No posts yet. Be the first to share something with the community.</p>
         </div>
     @else
-        <div class="space-y-4">
+        <div style="display:flex;flex-direction:column;gap:0.75rem;">
             @foreach($this->posts as $post)
-                <div class="dot-card" style="padding:1.25rem 1.5rem;">
-                    <div class="flex items-start gap-3">
-                        <div class="w-9 h-9 rounded-full bg-indigo-500 flex items-center justify-center text-white text-sm font-bold shrink-0">
+                @php
+                    $typeColors = ['discussion'=>'#60a5fa','announcement'=>'#fb923c','question'=>'#22d3ee','idea'=>'#34d399','bug_report'=>'#f87171','release'=>'#a78bfa','success_story'=>'#4ade80','showcase'=>'#f472b6','tutorial'=>'#818cf8','agent'=>'#c084fc','integration'=>'#2dd4bf','event'=>'#fb923c','article'=>'#94a3b8','poll'=>'#fbbf24','video'=>'#f87171','job'=>'#38bdf8','marketplace'=>'#4ade80'];
+                    $color = $typeColors[$post->type] ?? '#71717a';
+                @endphp
+                <a href="{{ route('posts.show', $post->id) }}" class="dot-card" style="padding:1.1rem 1.5rem;display:block;text-decoration:none;transition:border-color .15s;">
+                    <div style="display:flex;align-items:flex-start;gap:0.75rem;">
+                        <div style="width:34px;height:34px;border-radius:50%;background:rgba(192,132,252,0.12);border:1px solid rgba(192,132,252,0.2);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#c084fc;flex-shrink:0;font-family:'Syne',sans-serif;">
                             {{ strtoupper(substr($post->author->name, 0, 1)) }}
                         </div>
-                        <div class="flex-1 min-w-0">
-                            <div class="flex items-center gap-2 mb-0.5">
-                                <span class="text-sm font-semibold text-gray-900">{{ $post->author->name }}</span>
-                                <span class="text-xs px-2 py-0.5 rounded-full bg-indigo-100 text-indigo-700 font-medium">
+                        <div style="flex:1;min-width:0;">
+                            <div style="display:flex;align-items:center;flex-wrap:wrap;gap:6px;margin-bottom:4px;">
+                                <span style="font-size:13px;font-weight:600;color:#d4d4d8;">{{ $post->author->name }}</span>
+                                <span style="font-size:11px;font-weight:600;padding:2px 8px;border-radius:100px;background:{{ $color }}18;color:{{ $color }};">
                                     {{ str_replace('_', ' ', ucfirst($post->type)) }}
                                 </span>
                                 @if($post->community)
-                                    <span class="text-xs text-gray-400">in {{ $post->community->name }}</span>
+                                    <span style="font-size:11px;color:#52525b;">in {{ $post->community->name }}</span>
                                 @endif
-                                <span class="text-xs text-gray-400 ml-auto">{{ $post->created_at->diffForHumans() }}</span>
+                                <span style="font-size:11px;color:#3f3f46;margin-left:auto;">{{ $post->created_at->diffForHumans() }}</span>
                             </div>
 
                             @if($post->title)
-                                <h4 class="text-base font-semibold text-gray-800 mb-1">{{ $post->title }}</h4>
+                                <div style="font-size:14px;font-weight:600;color:#f4f4f5;margin-bottom:4px;">{{ $post->title }}</div>
                             @endif
 
-                            <p class="text-sm text-gray-600 leading-relaxed line-clamp-3">{{ $post->body }}</p>
+                            <p style="font-size:13px;color:#71717a;line-height:1.6;margin:0;overflow:hidden;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;">{{ $post->body }}</p>
 
                             @if($post->enrichment?->tags)
-                                <div class="flex flex-wrap gap-1 mt-2">
+                                <div style="display:flex;flex-wrap:wrap;gap:5px;margin-top:0.6rem;">
                                     @foreach(array_slice($post->enrichment->tags, 0, 4) as $tag)
-                                        <span class="text-xs px-1.5 py-0.5 bg-gray-100 text-gray-500 rounded">#{{ $tag }}</span>
+                                        <span style="font-size:11px;padding:2px 7px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);border-radius:5px;color:#52525b;">#{{ $tag }}</span>
                                     @endforeach
                                 </div>
                             @endif
 
-                            <div class="flex items-center gap-4 mt-3">
-                                <button wire:click="react({{ $post->id }})" class="flex items-center gap-1 text-xs text-gray-400 hover:text-indigo-600 transition-colors">
-                                    <span>👍</span>
+                            <div style="display:flex;align-items:center;gap:14px;margin-top:0.75rem;padding-top:0.6rem;border-top:1px solid rgba(255,255,255,0.05);">
+                                <button wire:click.stop="react({{ $post->id }})" style="display:flex;align-items:center;gap:4px;font-size:12px;color:#71717a;background:none;border:none;cursor:pointer;padding:0;transition:color .13s;" onmouseover="this.style.color='#c084fc'" onmouseout="this.style.color='#71717a'">
+                                    <span class="material-symbols-rounded" style="font-size:14px;">thumb_up</span>
                                     <span>{{ $post->reactions_count }}</span>
                                 </button>
-                                <span class="flex items-center gap-1 text-xs text-gray-400">
-                                    <span>💬</span>
+                                <span style="display:flex;align-items:center;gap:4px;font-size:12px;color:#71717a;">
+                                    <span class="material-symbols-rounded" style="font-size:14px;">chat_bubble_outline</span>
                                     <span>{{ $post->comments_count }}</span>
                                 </span>
                                 @if($post->enrichment)
-                                    <span class="text-xs px-1.5 py-0.5 rounded-full ml-auto
-                                        @if($post->enrichment->sentiment === 'positive') bg-green-50 text-green-600
-                                        @elseif($post->enrichment->sentiment === 'negative') bg-red-50 text-red-500
-                                        @else bg-gray-50 text-gray-400 @endif">
-                                        {{ ucfirst($post->enrichment->sentiment ?? 'neutral') }}
-                                    </span>
+                                    @php
+                                        $sentimentColors = ['positive' => '#4ade80', 'negative' => '#f87171', 'neutral' => '#71717a', 'mixed' => '#fbbf24'];
+                                        $sc = $sentimentColors[$post->enrichment->sentiment] ?? '#71717a';
+                                    @endphp
+                                    <span style="font-size:11px;padding:2px 8px;border-radius:100px;background:{{ $sc }}18;color:{{ $sc }};margin-left:auto;">{{ ucfirst($post->enrichment->sentiment ?? 'neutral') }}</span>
                                 @endif
                             </div>
                         </div>
                     </div>
-                </div>
+                </a>
             @endforeach
         </div>
     @endif

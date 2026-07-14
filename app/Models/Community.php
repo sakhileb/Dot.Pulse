@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -9,6 +10,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Community extends Model
 {
+    use HasFactory;
     protected $fillable = [
         'team_id', 'created_by', 'name', 'slug', 'description',
         'avatar_url', 'banner_url', 'industry', 'visibility', 'members_count',

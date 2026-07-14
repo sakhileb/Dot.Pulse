@@ -70,15 +70,25 @@
         .dot-btn-ghost:hover { background:rgba(255,255,255,0.1); color:#f4f4f5; }
         .dot-badge { display:inline-flex; align-items:center; padding:2px 8px; border-radius:100px; font-size:11px; font-weight:600; }
         .dot-badge-accent { background:rgba(192,132,252,0.12); color:#c084fc; }
-        select.dot-input option { background:#1a1a1f; }
+        /* Mobile sidebar */
+        @media (max-width: 900px) {
+            .sidebar { transform: translateX(-100%); transition: transform .22s ease; }
+            .sidebar.open { transform: translateX(0); }
+            .topbar { left: 0; }
+            .content-wrap { margin-left: 0; }
+            .mobile-overlay { display: block !important; }
+        }
+        .mobile-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 39; }
     </style>
     @livewireStyles
     <script defer src="https://unpkg.com/alpinejs@3.10.2/dist/cdn.min.js"></script>
 </head>
-<body>
+<body x-data="{ sidebarOpen: false }">
     <x-banner />
 
-    <aside class="sidebar">
+    <div class="mobile-overlay" @click="sidebarOpen = false" :class="{ 'hidden': !sidebarOpen }"></div>
+
+    <aside class="sidebar" :class="{ 'open': sidebarOpen }">
         <div class="sidebar-brand">
             <div class="brand-icon">
                 <span class="material-symbols-rounded">groups</span>
@@ -99,11 +109,60 @@
                 <span class="material-symbols-rounded nav-icon">dashboard</span>
                 Dashboard
             </a>
-            <div class="sidebar-divider" style="margin:10px 0;"></div>
+
+            <div class="nav-section-label">Discover</div>
+            <a href="{{ route('communities.index') }}" class="nav-item {{ request()->routeIs('communities.*') ? 'active' : '' }}">
+                <span class="material-symbols-rounded nav-icon">groups</span>
+                Communities
+            </a>
+            <a href="{{ route('events.index') }}" class="nav-item {{ request()->routeIs('events.*') ? 'active' : '' }}">
+                <span class="material-symbols-rounded nav-icon">event</span>
+                Events
+            </a>
+            <a href="{{ route('marketplace.index') }}" class="nav-item {{ request()->routeIs('marketplace.*') ? 'active' : '' }}">
+                <span class="material-symbols-rounded nav-icon">storefront</span>
+                Marketplace
+            </a>
+            <a href="{{ route('search') }}" class="nav-item {{ request()->routeIs('search') ? 'active' : '' }}">
+                <span class="material-symbols-rounded nav-icon">search</span>
+                Search
+            </a>
+
+            <div class="nav-section-label">You</div>
+            <a href="{{ auth()->check() ? route('profile.public', auth()->user()->name) : '#' }}" class="nav-item {{ request()->routeIs('profile.public') && request()->route('username') === auth()->user()?->name ? 'active' : '' }}">
+                <span class="material-symbols-rounded nav-icon">account_circle</span>
+                My Profile
+            </a>
+            <a href="{{ route('messages.index') }}" class="nav-item {{ request()->routeIs('messages.*') ? 'active' : '' }}">
+                <span class="material-symbols-rounded nav-icon">chat_bubble_outline</span>
+                Messages
+            </a>
+            <a href="{{ route('notifications.index') }}" class="nav-item {{ request()->routeIs('notifications.*') ? 'active' : '' }}">
+                <span class="material-symbols-rounded nav-icon">notifications</span>
+                Notifications
+            </a>
+            <a href="{{ route('pulse-profile.edit') }}" class="nav-item {{ request()->routeIs('pulse-profile.edit') ? 'active' : '' }}">
+                <span class="material-symbols-rounded nav-icon">tune</span>
+                Pulse Settings
+            </a>
             <a href="{{ route('profile.show') }}" class="nav-item {{ request()->routeIs('profile.show') ? 'active' : '' }}">
                 <span class="material-symbols-rounded nav-icon">manage_accounts</span>
-                Profile & Settings
+                Account
             </a>
+
+            @auth
+            @php
+                $currentProfile = \App\Models\PulseProfile::where('user_id', auth()->id())->first();
+                $isMod = $currentProfile && in_array($currentProfile->role, ['moderator', 'admin']);
+            @endphp
+            @if($isMod)
+            <div class="nav-section-label">Admin</div>
+            <a href="{{ route('moderation.index') }}" class="nav-item {{ request()->routeIs('moderation.*') ? 'active' : '' }}">
+                <span class="material-symbols-rounded nav-icon" style="color:#f87171;">shield</span>
+                Moderation
+            </a>
+            @endif
+            @endauth
         </nav>
 
         @auth
@@ -120,12 +179,27 @@
     </aside>
 
     <header class="topbar">
+        <button @click="sidebarOpen = !sidebarOpen" class="topbar-btn" style="display:none;" x-show="true" x-cloak>
+            <span class="material-symbols-rounded">menu</span>
+        </button>
+        <style>@media(max-width:900px){.topbar-hamburger{display:flex!important}}</style>
+        <button class="topbar-btn topbar-hamburger" style="display:none;" @click="sidebarOpen = !sidebarOpen">
+            <span class="material-symbols-rounded">menu</span>
+        </button>
         <div class="topbar-title">
             @isset($header){{ $header }}@else Dot.Pulse
             @endisset
         </div>
+        <a href="{{ route('communities.create') }}" class="dot-btn dot-btn-primary" style="font-size:12px;padding:5px 12px;text-decoration:none;">
+            <span class="material-symbols-rounded" style="font-size:14px;">add</span>
+            New Post
+        </a>
+        <a href="{{ route('search') }}" class="topbar-btn" title="Search">
+            <span class="material-symbols-rounded">search</span>
+        </a>
         @auth
         <span class="topbar-team">{{ Auth::user()->currentTeam->name ?? 'Personal' }}</span>
+        <livewire:pulse.notification-bell />
         @endauth
         <a href="{{ route('profile.show') }}" class="topbar-btn" title="Profile">
             <span class="material-symbols-rounded">account_circle</span>

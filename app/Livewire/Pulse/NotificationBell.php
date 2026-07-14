@@ -1,0 +1,43 @@
+<?php
+
+namespace App\Livewire\Pulse;
+
+use Illuminate\Support\Collection;
+use Livewire\Attributes\Computed;
+use Livewire\Component;
+
+class NotificationBell extends Component
+{
+    public bool $open = false;
+
+    #[Computed]
+    public function unreadCount(): int
+    {
+        return auth()->user()->unreadNotifications()->count();
+    }
+
+    #[Computed]
+    public function recent(): Collection
+    {
+        return auth()->user()->notifications()->latest()->limit(8)->get();
+    }
+
+    public function toggleOpen(): void
+    {
+        $this->open = ! $this->open;
+        if ($this->open) {
+            unset($this->recent, $this->unreadCount);
+        }
+    }
+
+    public function markAllRead(): void
+    {
+        auth()->user()->unreadNotifications->markAsRead();
+        unset($this->unreadCount, $this->recent);
+    }
+
+    public function render(): \Illuminate\View\View
+    {
+        return view('livewire.pulse.notification-bell');
+    }
+}

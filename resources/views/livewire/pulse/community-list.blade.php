@@ -1,40 +1,41 @@
-<div class="dot-card" style="padding:1.5rem;">
-    <div class="flex items-center justify-between mb-4">
-        <h3 style="font-family:'Syne',sans-serif;font-size:0.875rem;font-weight:700;color:#f4f4f5;">Communities</h3>
-        <input
-            wire:model.live="search"
-            type="text"
-            placeholder="Search communities..."
-            class="border border-gray-300 rounded px-3 py-1.5 text-xs focus:ring-2 focus:ring-indigo-500 focus:outline-none w-48"
-        />
+<div class="dot-card" style="padding:1.25rem 1.5rem;">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;gap:0.75rem;flex-wrap:wrap;">
+        <h3 style="font-family:'Syne',sans-serif;font-size:0.875rem;font-weight:700;color:#f4f4f5;margin:0;">Communities</h3>
+        <div style="display:flex;gap:0.5rem;align-items:center;">
+            <div style="position:relative;">
+                <span class="material-symbols-rounded" style="position:absolute;left:9px;top:50%;transform:translateY(-50%);font-size:14px;color:#52525b;pointer-events:none;">search</span>
+                <input wire:model.live="search" type="text" placeholder="Search…" class="dot-input" style="font-size:12px;padding-left:30px;width:160px;" />
+            </div>
+            <a href="{{ route('communities.index') }}" class="dot-btn dot-btn-ghost" style="font-size:12px;text-decoration:none;">
+                View all
+            </a>
+        </div>
     </div>
 
     @if($this->communities->isEmpty())
-        <p class="text-sm text-gray-400 py-6 text-center">No communities found.</p>
+        <p style="font-size:13px;color:#3f3f46;text-align:center;padding:2rem;">No communities found.</p>
     @else
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:0.625rem;">
             @foreach($this->communities as $community)
                 @php $isMember = $community->hasMember(auth()->user()); @endphp
-                <div class="border border-gray-200 rounded-lg p-4 flex items-start justify-between gap-3">
-                    <div class="min-w-0">
-                        <p class="text-sm font-semibold text-gray-800 truncate">{{ $community->name }}</p>
-                        @if($community->industry)
-                            <p class="text-xs text-indigo-500 font-medium mb-1">{{ $community->industry }}</p>
-                        @endif
-                        <p class="text-xs text-gray-400 line-clamp-2">{{ $community->description }}</p>
-                        <p class="text-xs text-gray-400 mt-1">{{ number_format($community->members_count) }} members</p>
+                <div class="dot-card" style="padding:0.875rem 1rem;display:flex;flex-direction:column;gap:0.5rem;">
+                    <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:0.5rem;">
+                        <div style="min-width:0;">
+                            <a href="{{ route('communities.show', $community->slug) }}" style="font-size:13px;font-weight:600;color:#f4f4f5;text-decoration:none;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ $community->name }}</a>
+                            @if($community->industry)
+                                <div style="font-size:10px;color:#c084fc;font-weight:600;margin-top:1px;">{{ $community->industry }}</div>
+                            @endif
+                        </div>
+                        <div style="flex-shrink:0;">
+                            @if($isMember)
+                                <button wire:click="leave({{ $community->id }})" style="font-size:10px;padding:3px 9px;border:1px solid rgba(255,255,255,0.1);border-radius:6px;color:#52525b;background:transparent;cursor:pointer;transition:all .13s;" onmouseover="this.style.borderColor='rgba(248,113,113,0.4)';this.style.color='#f87171'" onmouseout="this.style.borderColor='rgba(255,255,255,0.1)';this.style.color='#52525b'">Leave</button>
+                            @else
+                                <button wire:click="join({{ $community->id }})" style="font-size:10px;padding:3px 9px;border:none;border-radius:6px;background:#c084fc;color:#09090b;cursor:pointer;font-weight:600;transition:filter .13s;" onmouseover="this.style.filter='brightness(1.1)'" onmouseout="this.style.filter='none'">Join</button>
+                            @endif
+                        </div>
                     </div>
-                    <div class="shrink-0">
-                        @if($isMember)
-                            <button wire:click="leave({{ $community->id }})" class="text-xs px-3 py-1 border border-gray-300 rounded text-gray-500 hover:border-red-300 hover:text-red-500 transition-colors">
-                                Leave
-                            </button>
-                        @else
-                            <button wire:click="join({{ $community->id }})" class="text-xs px-3 py-1 bg-indigo-600 text-white rounded hover:bg-indigo-700 transition-colors">
-                                Join
-                            </button>
-                        @endif
-                    </div>
+                    <p style="font-size:11px;color:#52525b;margin:0;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;line-height:1.5;">{{ $community->description }}</p>
+                    <div style="font-size:10px;color:#3f3f46;">{{ number_format($community->members_count) }} members</div>
                 </div>
             @endforeach
         </div>
