@@ -4,6 +4,7 @@ namespace App\Livewire\Pulse;
 
 use App\Actions\Pulse\CreateCommunity as CreateCommunityAction;
 use Livewire\Component;
+use Illuminate\Support\Facades\Auth;
 
 class CreateCommunity extends Component
 {
@@ -35,12 +36,12 @@ class CreateCommunity extends Component
         $this->validate();
 
         $community = app(CreateCommunityAction::class)->handle(
-            userId:      auth()->id(),
+            userId:      Auth::id(),
             name:        $this->name,
             description: $this->description,
             industry:    $this->industry,
             visibility:  $this->visibility,
-            teamId:      auth()->user()->currentTeam?->id,
+            teamId:      Auth::user()->currentTeam?->id,
         );
 
         $this->redirect(route('communities.show', $community->slug), navigate: true);

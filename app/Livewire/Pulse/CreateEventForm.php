@@ -7,6 +7,7 @@ use App\Models\Community;
 use Illuminate\Support\Collection;
 use Livewire\Attributes\Computed;
 use Livewire\Component;
+use Illuminate\Support\Facades\Auth;
 
 class CreateEventForm extends Component
 {
@@ -37,7 +38,7 @@ class CreateEventForm extends Component
     public function communities(): Collection
     {
         return Community::where('visibility', 'public')
-            ->orWhereHas('memberships', fn ($q) => $q->where('user_id', auth()->id()))
+            ->orWhereHas('memberships', fn ($q) => $q->where('user_id', Auth::id()))
             ->orderBy('name')->get();
     }
 
@@ -46,7 +47,7 @@ class CreateEventForm extends Component
         $this->validate();
 
         app(CreateEventAction::class)->handle(
-            userId:      auth()->id(),
+            userId:      Auth::id(),
             title:       $this->title,
             description: $this->description,
             type:        $this->type,

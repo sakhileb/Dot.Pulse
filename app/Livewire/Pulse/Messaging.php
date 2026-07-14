@@ -10,6 +10,7 @@ use Livewire\Attributes\Computed;
 use Livewire\Attributes\On;
 use Livewire\Attributes\Url;
 use Livewire\Component;
+use Illuminate\Support\Facades\Auth;
 
 class Messaging extends Component
 {
@@ -28,7 +29,7 @@ class Messaging extends Component
     public function conversations(): Collection
     {
         return PulseConversation::with(['participants', 'lastMessage.sender'])
-            ->whereHas('participants', fn ($q) => $q->where('user_id', auth()->id()))
+            ->whereHas('participants', fn ($q) => $q->where('user_id', Auth::id()))
             ->latest('updated_at')
             ->limit(30)
             ->get();
@@ -42,7 +43,7 @@ class Messaging extends Component
         }
 
         return PulseConversation::with(['participants', 'messages.sender'])
-            ->whereHas('participants', fn ($q) => $q->where('user_id', auth()->id()))
+            ->whereHas('participants', fn ($q) => $q->where('user_id', Auth::id()))
             ->find($this->conversationId);
     }
 
@@ -53,7 +54,7 @@ class Messaging extends Component
             return collect();
         }
 
-        return User::where('id', '!=', auth()->id())
+        return User::where('id', '!=', Auth::id())
             ->where('name', 'like', '%' . $this->searchUser . '%')
             ->limit(8)
             ->get();
@@ -67,7 +68,7 @@ class Messaging extends Component
 
     public function startConversationWith(int $userId): void
     {
-        $conversation = PulseConversation::directBetween(auth()->id(), $userId);
+        $conversation = PulseConversation::directBetween(Auth::id(), $userId);
         $this->conversationId = $conversation->id;
         $this->searchUser     = '';
         unset($this->conversations, $this->activeConversation, $this->userSearchResults);
@@ -83,7 +84,7 @@ class Messaging extends Component
 
         app(SendMessage::class)->handle(
             conversationId: $this->conversationId,
-            senderId:       auth()->id(),
+            senderId:       Auth::id(),
             body:           $this->messageBody,
         );
 
@@ -117,7 +118,7 @@ class Messaging extends Component
     public function otherParticipant(PulseConversation $conversation): ?User
     {
         return $conversation->participants
-            ->firstWhere('id', '!=', auth()->id());
+            ->firstWhere('id', '!=', Auth::id());
     }
 
     public function render(): \Illuminate\View\View

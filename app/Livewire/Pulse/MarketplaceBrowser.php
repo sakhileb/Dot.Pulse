@@ -6,6 +6,7 @@ use App\Models\PulseMarketplaceItem;
 use Illuminate\Support\Collection;
 use Livewire\Attributes\Computed;
 use Livewire\Component;
+use Illuminate\Support\Facades\Auth;
 
 class MarketplaceBrowser extends Component
 {
@@ -36,10 +37,10 @@ class MarketplaceBrowser extends Component
     {
         $item = PulseMarketplaceItem::findOrFail($itemId);
 
-        $alreadyInstalled = $item->installs()->where('user_id', auth()->id())->exists();
+        $alreadyInstalled = $item->installs()->where('user_id', Auth::id())->exists();
 
         if (! $alreadyInstalled) {
-            $item->installs()->create(['user_id' => auth()->id()]);
+            $item->installs()->create(['user_id' => Auth::id()]);
             $item->increment('installs_count');
         }
 

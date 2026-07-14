@@ -10,6 +10,7 @@ use App\Models\PulseProfile;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
+use Illuminate\Support\Facades\Auth;
 
 class PulseController extends Controller
 {
@@ -86,7 +87,7 @@ class PulseController extends Controller
     public function moderation(): View
     {
         /** @var \App\Models\User $user */
-        $user    = auth()->user();
+        $user    = Auth::user();
         $profile = $user->profile ?? PulseProfile::where('user_id', $user->id)->first();
 
         abort_unless(

@@ -7,6 +7,7 @@ use App\Models\CommunityMembership;
 use Illuminate\Support\Collection;
 use Livewire\Attributes\Computed;
 use Livewire\Component;
+use Illuminate\Support\Facades\Auth;
 
 class CommunityList extends Component
 {
@@ -30,13 +31,13 @@ class CommunityList extends Component
     {
         $community = Community::findOrFail($communityId);
 
-        if ($community->hasMember(auth()->user())) {
+        if ($community->hasMember(Auth::user())) {
             return;
         }
 
         CommunityMembership::create([
             'community_id' => $communityId,
-            'user_id'      => auth()->id(),
+            'user_id'      => Auth::id(),
             'role'         => 'member',
         ]);
 
@@ -49,7 +50,7 @@ class CommunityList extends Component
         $community = Community::findOrFail($communityId);
 
         CommunityMembership::where('community_id', $communityId)
-            ->where('user_id', auth()->id())
+            ->where('user_id', Auth::id())
             ->delete();
 
         $community->decrement('members_count');

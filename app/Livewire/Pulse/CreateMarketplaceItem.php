@@ -4,6 +4,7 @@ namespace App\Livewire\Pulse;
 
 use App\Actions\Pulse\PublishMarketplaceItem;
 use Livewire\Component;
+use Illuminate\Support\Facades\Auth;
 
 class CreateMarketplaceItem extends Component
 {
@@ -27,7 +28,7 @@ class CreateMarketplaceItem extends Component
         $this->validate();
 
         $item = app(PublishMarketplaceItem::class)->handle(
-            userId:      auth()->id(),
+            userId:      Auth::id(),
             title:       $this->title,
             description: $this->description,
             category:    $this->category,

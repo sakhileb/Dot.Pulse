@@ -7,6 +7,8 @@ use App\Models\PulseProfile;
 use Illuminate\Support\Facades\Storage;
 use Livewire\Component;
 use Livewire\WithFileUploads;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Filesystem\FilesystemAdapter;
 
 class EditPulseProfile extends Component
 {
@@ -26,7 +28,7 @@ class EditPulseProfile extends Component
 
     public function mount(): void
     {
-        $user          = auth()->user();
+        $user          = Auth::user();
         $this->profile = PulseProfile::firstOrCreate(
             ['user_id' => $user->id],
             ['role'    => 'customer'],
@@ -61,13 +63,17 @@ class EditPulseProfile extends Component
         $coverUrl   = $this->profile->cover_url;
 
         if ($this->avatarFile) {
-            $media     = $uploader->handle($this->avatarFile, auth()->id(), PulseProfile::class, $this->profile->id);
-            $avatarUrl = Storage::disk('public')->url($media->path);
+            $media = $uploader->handle($this->avatarFile, Auth::id(), PulseProfile::class, $this->profile->id);
+            /** @var FilesystemAdapter $publicDisk */
+            $publicDisk = Storage::disk('public');
+            $avatarUrl  = $publicDisk->url($media->path);
         }
 
         if ($this->coverFile) {
-            $media    = $uploader->handle($this->coverFile, auth()->id(), PulseProfile::class, $this->profile->id, 'public');
-            $coverUrl = Storage::disk('public')->url($media->path);
+            $media = $uploader->handle($this->coverFile, Auth::id(), PulseProfile::class, $this->profile->id, 'public');
+            /** @var FilesystemAdapter $publicDisk */
+            $publicDisk = Storage::disk('public');
+            $coverUrl   = $publicDisk->url($media->path);
         }
 
         $skills = array_values(array_filter(array_map(

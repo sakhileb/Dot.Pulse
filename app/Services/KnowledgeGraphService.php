@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use Illuminate\Support\Str;
 use App\Models\PulseKnowledgeEdge;
 use App\Models\PulseKnowledgeNode;
 use App\Models\PulsePost;
@@ -31,7 +32,7 @@ class KnowledgeGraphService
 
         // If post type is 'question', create a problem node
         if ($post->type === 'question') {
-            $problemNode = $this->upsertNode('problem', $post->title ?? \Str::limit($post->body, 80));
+            $problemNode = $this->upsertNode('problem', $post->title ?? Str::limit($post->body, 80));
             foreach ($topicNodes as $topicNode) {
                 $this->upsertEdge($problemNode->id, $topicNode->id, 'relates_to');
             }

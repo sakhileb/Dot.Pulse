@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\RateLimiter;
 use Livewire\Attributes\Computed;
 use Livewire\Component;
 use Livewire\WithFileUploads;
+use Illuminate\Support\Facades\Auth;
 
 class CreatePost extends Component
 {
@@ -36,7 +37,7 @@ class CreatePost extends Component
     {
         return Community::where('visibility', 'public')
             ->orWhere(fn ($q) => $q->where('visibility', 'private')
-                ->whereHas('memberships', fn ($q) => $q->where('user_id', auth()->id())))
+                ->whereHas('memberships', fn ($q) => $q->where('user_id', Auth::id())))
             ->orderBy('name')
             ->get();
     }
@@ -45,7 +46,7 @@ class CreatePost extends Component
     {
         // Rate limiting
         $executed = RateLimiter::attempt(
-            'pulse-post:' . auth()->id(),
+            'pulse-post:' . Auth::id(),
             $perHour = 10,
             function () {},
         );
@@ -63,9 +64,9 @@ class CreatePost extends Component
         }
 
         $post = PulsePost::create([
-            'user_id'      => auth()->id(),
+            'user_id'      => Auth::id(),
             'community_id' => $this->communityId ?: null,
-            'team_id'      => auth()->user()->currentTeam?->id,
+            'team_id'      => Auth::user()->currentTeam?->id,
             'type'         => $this->type,
             'title'        => $this->title ?: null,
             'body'         => $this->body,
@@ -73,7 +74,7 @@ class CreatePost extends Component
         ]);
 
         // Award 5 points for creating a post
-        $profile = PulseProfile::where('user_id', auth()->id())->first();
+        $profile = PulseProfile::where('user_id', Auth::id())->first();
         $profile?->addPoints(5);
 
         // Dispatch AI enrichment job (async)

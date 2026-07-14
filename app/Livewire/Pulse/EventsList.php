@@ -7,6 +7,7 @@ use App\Models\PulseEventRsvp;
 use Illuminate\Support\Collection;
 use Livewire\Attributes\Computed;
 use Livewire\Component;
+use Illuminate\Support\Facades\Auth;
 
 class EventsList extends Component
 {
@@ -33,7 +34,7 @@ class EventsList extends Component
         $event = PulseEvent::findOrFail($eventId);
 
         $existing = PulseEventRsvp::where('pulse_event_id', $eventId)
-            ->where('user_id', auth()->id())
+            ->where('user_id', Auth::id())
             ->first();
 
         if ($existing) {
@@ -41,7 +42,7 @@ class EventsList extends Component
         } else {
             PulseEventRsvp::create([
                 'pulse_event_id' => $eventId,
-                'user_id'        => auth()->id(),
+                'user_id'        => Auth::id(),
                 'status'         => $status,
             ]);
             $event->increment('rsvps_count');

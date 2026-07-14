@@ -8,6 +8,7 @@ use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Str;
 
 class CommentPosted implements ShouldBroadcast
 {
@@ -32,7 +33,7 @@ class CommentPosted implements ShouldBroadcast
             'pulse_post_id'  => $this->comment->pulse_post_id,
             'parent_id'      => $this->comment->parent_id,
             'author'         => $this->comment->author->name,
-            'body_preview'   => \Str::limit($this->comment->body, 80),
+            'body_preview'   => Str::limit($this->comment->body, 80),
         ];
     }
 }

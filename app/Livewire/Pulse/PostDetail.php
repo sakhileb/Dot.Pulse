@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\RateLimiter;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\On;
 use Livewire\Component;
+use Illuminate\Support\Facades\Auth;
 
 class PostDetail extends Component
 {
@@ -71,7 +72,7 @@ class PostDetail extends Component
             return null;
         }
 
-        return app(VotePoll::class)->userVote($this->poll->id, auth()->id());
+        return app(VotePoll::class)->userVote($this->poll->id, Auth::id());
     }
 
     // Echo: live comment updates
@@ -88,7 +89,7 @@ class PostDetail extends Component
 
         app(AddComment::class)->handle(
             postId: $this->post->id,
-            userId: auth()->id(),
+            userId: Auth::id(),
             body:   $this->commentBody,
         );
 
@@ -103,7 +104,7 @@ class PostDetail extends Component
 
         app(AddComment::class)->handle(
             postId:   $this->post->id,
-            userId:   auth()->id(),
+            userId:   Auth::id(),
             body:     $this->replyBody,
             parentId: $this->replyingTo,
         );
@@ -116,11 +117,11 @@ class PostDetail extends Component
 
     public function react(string $morphType, int $morphId, string $emoji = '👍'): void
     {
-        if (! RateLimiter::attempt('pulse-reaction:' . auth()->id(), 30, fn () => true)) {
+        if (! RateLimiter::attempt('pulse-reaction:' . Auth::id(), 30, fn () => true)) {
             return;
         }
 
-        $user = auth()->user();
+        $user = Auth::user();
 
         $existing = PulseReaction::where('user_id', $user->id)
             ->where('reactable_type', $morphType)
@@ -158,13 +159,13 @@ class PostDetail extends Component
             return;
         }
 
-        app(VotePoll::class)->handle($this->poll->id, auth()->id(), $optionIndex);
+        app(VotePoll::class)->handle($this->poll->id, Auth::id(), $optionIndex);
         unset($this->poll, $this->pollResults, $this->userVote);
     }
 
     public function markSolution(int $commentId): void
     {
-        app(MarkSolution::class)->handle($commentId, auth()->id());
+        app(MarkSolution::class)->handle($commentId, Auth::id());
         unset($this->comments);
     }
 
@@ -181,7 +182,7 @@ class PostDetail extends Component
         ]);
 
         app(ReportContent::class)->handle(
-            reporterId: auth()->id(),
+            reporterId: Auth::id(),
             morphType:  PulsePost::class,
             morphId:    $this->post->id,
             reason:     $this->reportReason,

@@ -8,6 +8,7 @@ use App\Models\PulsePost;
 use Illuminate\Support\Collection;
 use Livewire\Attributes\Computed;
 use Livewire\Component;
+use Illuminate\Support\Facades\Auth;
 
 class CommunityDetail extends Component
 {
@@ -46,14 +47,14 @@ class CommunityDetail extends Component
     #[Computed]
     public function isMember(): bool
     {
-        return $this->community->hasMember(auth()->user());
+        return $this->community->hasMember(Auth::user());
     }
 
     #[Computed]
     public function memberRole(): ?string
     {
         return CommunityMembership::where('community_id', $this->community->id)
-            ->where('user_id', auth()->id())
+            ->where('user_id', Auth::id())
             ->value('role');
     }
 
@@ -65,7 +66,7 @@ class CommunityDetail extends Component
 
         CommunityMembership::create([
             'community_id' => $this->community->id,
-            'user_id'      => auth()->id(),
+            'user_id'      => Auth::id(),
             'role'         => 'member',
         ]);
 
@@ -88,7 +89,7 @@ class CommunityDetail extends Component
         }
 
         CommunityMembership::where('community_id', $this->community->id)
-            ->where('user_id', auth()->id())
+            ->where('user_id', Auth::id())
             ->delete();
 
         $this->community->decrement('members_count');

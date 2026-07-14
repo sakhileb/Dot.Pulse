@@ -8,6 +8,7 @@ use App\Models\PulsePostEnrichment;
 use Illuminate\Support\Collection;
 use Livewire\Attributes\Computed;
 use Livewire\Component;
+use Illuminate\Support\Facades\Auth;
 
 class ModerationQueue extends Component
 {
@@ -43,7 +44,7 @@ class ModerationQueue extends Component
         $enrichment->post->update(['status' => 'published']);
 
         PulseModerationLog::create([
-            'moderator_id'  => auth()->id(),
+            'moderator_id'  => Auth::id(),
             'target_type'   => PulsePost::class,
             'target_id'     => $enrichment->pulse_post_id,
             'action'        => 'approve',
@@ -63,7 +64,7 @@ class ModerationQueue extends Component
         $enrichment->post->update(['status' => 'removed']);
 
         PulseModerationLog::create([
-            'moderator_id'  => auth()->id(),
+            'moderator_id'  => Auth::id(),
             'target_type'   => PulsePost::class,
             'target_id'     => $enrichment->pulse_post_id,
             'action'        => 'reject',
@@ -82,7 +83,7 @@ class ModerationQueue extends Component
 
     private function authorizeModeratorAccess(): void
     {
-        $profile = \App\Models\PulseProfile::where('user_id', auth()->id())->first();
+        $profile = \App\Models\PulseProfile::where('user_id', Auth::id())->first();
 
         abort_unless(
             $profile && in_array($profile->role, ['moderator', 'admin']),

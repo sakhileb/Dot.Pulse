@@ -5,6 +5,7 @@ namespace App\Livewire\Pulse;
 use Illuminate\Support\Collection;
 use Livewire\Attributes\Computed;
 use Livewire\Component;
+use Illuminate\Support\Facades\Auth;
 
 class NotificationBell extends Component
 {
@@ -13,13 +14,13 @@ class NotificationBell extends Component
     #[Computed]
     public function unreadCount(): int
     {
-        return auth()->user()->unreadNotifications()->count();
+        return Auth::user()->unreadNotifications()->count();
     }
 
     #[Computed]
     public function recent(): Collection
     {
-        return auth()->user()->notifications()->latest()->limit(8)->get();
+        return Auth::user()->notifications()->latest()->limit(8)->get();
     }
 
     public function toggleOpen(): void
@@ -32,7 +33,7 @@ class NotificationBell extends Component
 
     public function markAllRead(): void
     {
-        auth()->user()->unreadNotifications->markAsRead();
+        Auth::user()->unreadNotifications->markAsRead();
         unset($this->unreadCount, $this->recent);
     }
 

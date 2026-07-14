@@ -12,6 +12,7 @@ use App\Models\User;
 use Illuminate\Support\Collection;
 use Livewire\Attributes\Computed;
 use Livewire\Component;
+use Illuminate\Support\Facades\Auth;
 
 class UserPublicProfile extends Component
 {
@@ -60,11 +61,11 @@ class UserPublicProfile extends Component
     #[Computed]
     public function isFollowing(): bool
     {
-        if (auth()->id() === $this->user->id) {
+        if (Auth::id() === $this->user->id) {
             return false;
         }
 
-        return PulseFollower::where('follower_id', auth()->id())
+        return PulseFollower::where('follower_id', Auth::id())
             ->where('following_id', $this->user->id)
             ->exists();
     }
@@ -72,7 +73,7 @@ class UserPublicProfile extends Component
     #[Computed]
     public function isOwnProfile(): bool
     {
-        return auth()->id() === $this->user->id;
+        return Auth::id() === $this->user->id;
     }
 
     public function toggleFollow(): void
@@ -81,13 +82,13 @@ class UserPublicProfile extends Component
             return;
         }
 
-        app(FollowUserAction::class)->handle(auth()->user(), $this->user);
+        app(FollowUserAction::class)->handle(Auth::user(), $this->user);
         unset($this->isFollowing, $this->followersCount);
     }
 
     public function startConversation(): void
     {
-        $conversation = PulseConversation::directBetween(auth()->id(), $this->user->id);
+        $conversation = PulseConversation::directBetween(Auth::id(), $this->user->id);
         $this->redirect(route('messages.show', $conversation->id), navigate: true);
     }
 

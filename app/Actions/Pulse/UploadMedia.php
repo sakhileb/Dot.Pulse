@@ -5,6 +5,7 @@ namespace App\Actions\Pulse;
 use App\Models\PulseMedia;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Filesystem\FilesystemAdapter;
 
 class UploadMedia
 {
@@ -46,8 +47,9 @@ class UploadMedia
 
     public function url(PulseMedia $media): string
     {
-        return $media->disk === 's3'
-            ? Storage::disk('s3')->url($media->path)
-            : Storage::disk('public')->url($media->path);
+        /** @var FilesystemAdapter $disk */
+        $disk = Storage::disk($media->disk);
+
+        return $disk->url($media->path);
     }
 }
