@@ -125,6 +125,7 @@ Full manifest shape, entity/event mapping, the privacy-gate design, and a worked
 | Version | Date | Author | Change |
 |---|---|---|---|
 | 1.0.0 | 2026-08-01 | Pulse Platform Lead | Initial wiki: derived from the real Laravel codebase (models, migrations, routes, services) with cross-reference to Dot.Brain's platforms/dot-pulse.md; explicitly separates shipped functionality from planned ecosystem integration |
+| 1.0.1 | 2026-08-01 | Platform Loop Pass | Engineering-quality pass: wired the real Dot.Pulse logo into favicons, the nav/brand mark components, and the auth card (replacing generic Jetstream placeholder marks and an unreferenced dead `components/welcome.blade.php` leftover, plus a stray `public/dot_projects.png` from another platform's template); added a loading state and missing paginator to `HomeFeed`; added `tests/Feature/Pulse/HomeFeedTest.php`; removed the stale duplicate Laravel 12/PHP 8.4 README section flagged in §7. AI moderation, knowledge-graph extraction, Reverb wiring, and the REST API were not touched, per this pass's bounded scope. Route/policy scan found no unauthenticated gaps — `/moderation` is properly role-gated in `PulseController::moderation`, and all API v1 routes sit behind `auth:sanctum`. |
 
 ## Open Questions
 

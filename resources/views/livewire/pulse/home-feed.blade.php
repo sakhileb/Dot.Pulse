@@ -9,6 +9,11 @@
         </select>
     </div>
 
+    <div wire:loading wire:target="filterType" style="text-align:center;padding:2rem 1rem;color:#52525b;font-size:12px;">
+        Loading posts…
+    </div>
+
+    <div wire:loading.remove wire:target="filterType">
     @if($this->posts->isEmpty())
         <div style="text-align:center;padding:4rem 1rem;color:#3f3f46;">
             <span class="material-symbols-rounded" style="font-size:40px;display:block;margin-bottom:0.5rem;">forum</span>
@@ -74,5 +79,10 @@
                 </a>
             @endforeach
         </div>
+
+        <div style="margin-top:1.25rem;">
+            {{ $this->posts->links() }}
+        </div>
     @endif
+    </div>
 </div>
