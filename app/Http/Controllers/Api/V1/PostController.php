@@ -17,6 +17,7 @@ class PostController extends Controller
     {
         $posts = PulsePost::with(['author:id,name', 'community:id,name,slug', 'enrichment'])
             ->published()
+            ->visibleTo($request->user())
             ->when($request->type, fn ($q) => $q->where('type', $request->type))
             ->when($request->community_id, fn ($q) => $q->where('community_id', $request->community_id))
             ->orderByDesc('ai_relevance_score')
@@ -26,11 +27,12 @@ class PostController extends Controller
         return response()->json($posts);
     }
 
-    public function show(int $id): JsonResponse
+    public function show(Request $request, int $id): JsonResponse
     {
         $post = PulsePost::with(['author:id,name', 'community:id,name,slug', 'enrichment', 'hashtags'])
-            ->published()
             ->findOrFail($id);
+
+        $this->authorize('view', $post);
 
         return response()->json($post);
     }

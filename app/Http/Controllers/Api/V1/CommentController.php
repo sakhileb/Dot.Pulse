@@ -11,8 +11,11 @@ use Illuminate\Http\Request;
 
 class CommentController extends Controller
 {
-    public function index(int $postId): JsonResponse
+    public function index(Request $request, int $postId): JsonResponse
     {
+        $post = PulsePost::findOrFail($postId);
+        $this->authorize('view', $post);
+
         $comments = PulseComment::with(['author:id,name', 'replies.author:id,name'])
             ->where('pulse_post_id', $postId)
             ->whereNull('parent_id')

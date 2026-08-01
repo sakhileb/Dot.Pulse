@@ -36,6 +36,8 @@ class PulseController extends Controller
         $post = PulsePost::with(['author', 'community', 'enrichment', 'hashtags'])
             ->findOrFail($id);
 
+        $this->authorize('view', $post);
+
         $post->increment('views_count');
 
         return view('pulse.posts.show', compact('post'));

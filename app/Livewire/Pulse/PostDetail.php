@@ -32,6 +32,8 @@ class PostDetail extends Component
 
     public function mount(PulsePost $post): void
     {
+        $this->authorize('view', $post);
+
         $this->post = $post->load(['author', 'community', 'enrichment', 'hashtags']);
     }
 

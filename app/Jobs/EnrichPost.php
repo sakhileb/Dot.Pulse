@@ -37,9 +37,12 @@ class EnrichPost implements ShouldQueue
 
     public function failed(\Throwable $e): void
     {
-        // Fall back to auto-publishing if AI enrichment fails permanently
+        // Fail safe: if AI enrichment fails permanently, never auto-publish.
+        // Route the post to human moderation instead of letting it go live
+        // unmoderated. It stays out of scopeFeed()/published() results either
+        // way, so this only affects whether it's queued for manual review.
         if ($this->post->status === 'pending') {
-            $this->post->update(['status' => 'published']);
+            $this->post->update(['status' => 'flagged']);
         }
     }
 }

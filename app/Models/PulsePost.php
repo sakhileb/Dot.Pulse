@@ -85,4 +85,23 @@ class PulsePost extends Model
     {
         return $query->published()->orderByDesc('ai_relevance_score')->orderByDesc('created_at');
     }
+
+    /**
+     * Restrict results to posts whose community is public, or a private/enterprise
+     * community the given user is a member of. Prevents private-community posts
+     * from leaking into the global feed / API for non-members.
+     */
+    public function scopeVisibleTo(\Illuminate\Database\Eloquent\Builder $query, ?User $user): \Illuminate\Database\Eloquent\Builder
+    {
+        return $query->where(function (\Illuminate\Database\Eloquent\Builder $q) use ($user) {
+            $q->whereDoesntHave('community', fn ($c) => $c->where('visibility', '!=', 'public'));
+
+            if ($user) {
+                $q->orWhereHas('community', function ($c) use ($user) {
+                    $c->where('visibility', '!=', 'public')
+                        ->whereHas('memberships', fn ($m) => $m->where('user_id', $user->id));
+                });
+            }
+        });
+    }
 }

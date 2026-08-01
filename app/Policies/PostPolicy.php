@@ -15,15 +15,22 @@ class PostPolicy
 
     public function view(?User $user, PulsePost $post): bool
     {
-        if ($post->status === 'published') {
+        // Owner and moderators can always view (moderation queue, drafts, etc.)
+        if ($user && ($post->user_id === $user->id || $this->isModerator($user))) {
             return true;
         }
 
-        if (! $user) {
+        if ($post->status !== 'published') {
             return false;
         }
 
-        return $post->user_id === $user->id || $this->isModerator($user);
+        // Posts in a private/enterprise community are only visible to members.
+        $community = $post->community;
+        if ($community && $community->visibility !== 'public') {
+            return $user !== null && $community->hasMember($user);
+        }
+
+        return true;
     }
 
     public function create(User $user): bool

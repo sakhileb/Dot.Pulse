@@ -24,6 +24,7 @@ class HomeFeed extends Component
     {
         return PulsePost::with(['author', 'community', 'enrichment'])
             ->published()
+            ->visibleTo(Auth::user())
             ->when($this->filterType, fn ($q) => $q->where('type', $this->filterType))
             ->orderByDesc('ai_relevance_score')
             ->orderByDesc('created_at')

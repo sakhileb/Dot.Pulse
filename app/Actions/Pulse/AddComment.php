@@ -27,6 +27,13 @@ class AddComment
 
         $post = PulsePost::with('author')->findOrFail($postId);
 
+        // A user must be able to view the post (published + community membership
+        // for private/enterprise communities) before they can comment on it.
+        abort_unless(
+            \Illuminate\Support\Facades\Gate::forUser(User::find($userId))->allows('view', $post),
+            403,
+        );
+
         $comment = PulseComment::create([
             'pulse_post_id' => $post->id,
             'user_id'       => $userId,
