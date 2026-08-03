@@ -52,14 +52,14 @@ class ModerationTest extends TestCase
         $this->assertDatabaseMissing('pulse_posts', ['id' => $post->id]);
     }
 
-    public function test_enrich_post_job_falls_back_to_published_on_failure(): void
+    public function test_enrich_post_job_flags_for_moderation_on_failure(): void
     {
         $post = PulsePost::factory()->create(['user_id' => $this->regularUser->id, 'status' => 'pending']);
 
         $job = new \App\Jobs\EnrichPost($post);
         $job->failed(new \Exception('API unavailable'));
 
-        $this->assertEquals('published', $post->fresh()->status);
+        $this->assertEquals('flagged', $post->fresh()->status);
     }
 
     public function test_report_content_is_idempotent(): void
