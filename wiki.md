@@ -1,6 +1,6 @@
 ---
 title: Dot.Pulse — Platform Wiki
-version: 1.0.0
+version: 1.1.0
 status: active
 owners: [Pulse Platform Lead]
 platform-id: dot-pulse
@@ -124,6 +124,7 @@ Full manifest shape, entity/event mapping, the privacy-gate design, and a worked
 
 | Version | Date | Author | Change |
 |---|---|---|---|
+| 1.1.0 | 2026-08-03 | Sakhile Bhayi | Redesigned `resources/views/welcome.blade.php`'s marketing surface: the nav's placeholder icon-box mark is now the real `public/images/logo.png` lockup, and a real, licensed Unsplash photo of a diverse team collaborating around a table (photo by Vitaly Gariev, @silverkblack, unsplash.com/photos/diverse-team-collaborates-around-a-table-in-office-fm4B1xWEIsU) now backs the hero section, hotlinked via Unsplash's CDN with a dark gradient overlay layered under the existing radial-gradient accent for WCAG-adequate text contrast, photographer credited inline as an HTML comment; added a matching logo mark to the footer, which previously had no brand mark at all. Also fixed a pre-existing bug in this file unrelated to the marketing copy itself: the actual custom marketing page ended at its own `</html>` (line 125), but roughly 220 lines of a dead, never-rendered duplicate default-Jetstream-scaffold document (a second `<head>`/`<body>`) were concatenated after it — removed as dead weight while in the file for the required change, not a scope expansion. The CDN image URL was verified with `curl -sI` before use (HTTP/2 200). |
 | 1.0.0 | 2026-08-01 | Pulse Platform Lead | Initial wiki: derived from the real Laravel codebase (models, migrations, routes, services) with cross-reference to Dot.Brain's platforms/dot-pulse.md; explicitly separates shipped functionality from planned ecosystem integration |
 | 1.0.1 | 2026-08-01 | Platform Loop Pass | Engineering-quality pass: wired the real Dot.Pulse logo into favicons, the nav/brand mark components, and the auth card (replacing generic Jetstream placeholder marks and an unreferenced dead `components/welcome.blade.php` leftover, plus a stray `public/dot_projects.png` from another platform's template); added a loading state and missing paginator to `HomeFeed`; added `tests/Feature/Pulse/HomeFeedTest.php`; removed the stale duplicate Laravel 12/PHP 8.4 README section flagged in §7. AI moderation, knowledge-graph extraction, Reverb wiring, and the REST API were not touched, per this pass's bounded scope. Route/policy scan found no unauthenticated gaps — `/moderation` is properly role-gated in `PulseController::moderation`, and all API v1 routes sit behind `auth:sanctum`. |
 | 1.0.2 | 2026-08-01 | Security Deep-Dive Pass | Follow-up pass specifically on the moderation/AI internals this platform's S=1 flag (Dot.Brain `15-MEGA-v2.md`) called out as unaudited. See "Security Review Findings" below for the fail-open moderation bug and private-community IDOR fixed, plus the knowledge-graph tenant-isolation gap flagged but left unfixed. |
