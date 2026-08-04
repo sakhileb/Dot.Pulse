@@ -174,7 +174,7 @@
                 <div class="user-avatar">{{ strtoupper(substr(Auth::user()->name, 0, 1)) }}</div>
                 <div style="min-width:0;flex:1;">
                     <div class="user-name">{{ Auth::user()->name }}</div>
-                    <div class="user-team">{{ Auth::user()->currentTeam->name ?? 'Personal' }}</div>
+                    <div class="user-team">{{ Auth::user()->currentTeam?->name ?? 'Personal' }}</div>
                 </div>
             </div>
         </div>
@@ -201,7 +201,7 @@
             <span class="material-symbols-rounded">search</span>
         </a>
         @auth
-        <span class="topbar-team">{{ Auth::user()->currentTeam->name ?? 'Personal' }}</span>
+        <span class="topbar-team">{{ Auth::user()->currentTeam?->name ?? 'Personal' }}</span>
         <livewire:pulse.notification-bell />
         @endauth
         <a href="{{ route('profile.show') }}" class="topbar-btn" title="Profile">
