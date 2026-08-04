@@ -2,11 +2,14 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\HasUserScope;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class PulseEventRsvp extends Model
 {
+    use HasUserScope;
+
     protected $table = 'pulse_event_rsvps';
     protected $fillable = ['pulse_event_id', 'user_id', 'status'];
 

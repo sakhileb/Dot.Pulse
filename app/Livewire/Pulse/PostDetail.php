@@ -125,8 +125,9 @@ class PostDetail extends Component
 
         $user = Auth::user();
 
-        $existing = PulseReaction::where('user_id', $user->id)
-            ->where('reactable_type', $morphType)
+        // No explicit user_id filter needed: PulseReaction's HasUserScope
+        // trait applies it automatically to every query against this model.
+        $existing = PulseReaction::where('reactable_type', $morphType)
             ->where('reactable_id', $morphId)
             ->first();
 

@@ -2,11 +2,14 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\HasUserScope;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class PulseMarketplaceInstall extends Model
 {
+    use HasUserScope;
+
     protected $table = 'pulse_marketplace_installs';
     protected $fillable = ['pulse_marketplace_item_id', 'user_id'];
 

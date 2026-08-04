@@ -33,9 +33,9 @@ class EventsList extends Component
     {
         $event = PulseEvent::findOrFail($eventId);
 
-        $existing = PulseEventRsvp::where('pulse_event_id', $eventId)
-            ->where('user_id', Auth::id())
-            ->first();
+        // No explicit user_id filter needed: PulseEventRsvp's HasUserScope
+        // trait applies it automatically to every query against this model.
+        $existing = PulseEventRsvp::where('pulse_event_id', $eventId)->first();
 
         if ($existing) {
             $existing->update(['status' => $status]);
