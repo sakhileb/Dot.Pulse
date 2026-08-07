@@ -69,13 +69,6 @@
                 transition: background-size 220ms var(--ease-out);
             }
 
-            /* The real mark's chevron and "pulse" wordmark are drawn in the brand navy,
-               which has almost no contrast against this page's navy background (~1.2:1).
-               A thin light rim (stacked drop-shadows, not a recolor) keeps every part of
-               the authentic logo legible without inventing a new asset. */
-            .brand-mark {
-                filter: drop-shadow(0 0 1px rgba(238, 244, 243, 0.9)) drop-shadow(0 0 1px rgba(238, 244, 243, 0.9)) drop-shadow(0 0 2px rgba(238, 244, 243, 0.55));
-            }
         </style>
     </head>
     <body class="antialiased">
@@ -89,7 +82,7 @@
         >
             <nav class="max-w-[1400px] mx-auto px-5 sm:px-8 py-3 flex items-center justify-between">
                 <a href="/" class="flex items-center gap-2.5 press">
-                    <img src="{{ asset('images/logo-light.png') }}" alt="Dot.Pulse" class="brand-mark h-16 sm:h-20 w-auto">
+                    <img src="{{ asset('images/logo-light.png') }}" alt="Dot.Pulse" class="h-16 sm:h-20 w-auto">
                 </a>
 
                 <div class="hidden md:flex items-center gap-8 font-mono text-[13px] tracking-wide uppercase text-[var(--mist)]">
@@ -294,7 +287,7 @@
         <footer class="py-14 px-5 sm:px-8 border-t border-[var(--line)]">
             <div class="max-w-[1400px] mx-auto flex flex-col sm:flex-row items-center justify-between gap-6">
                 <a href="/" class="flex items-center gap-2.5">
-                    <img src="{{ asset('images/logo-light.png') }}" alt="Dot.Pulse" class="brand-mark h-11 w-auto opacity-90">
+                    <img src="{{ asset('images/logo-light.png') }}" alt="Dot.Pulse" class="h-11 w-auto opacity-90">
                 </a>
                 <div class="flex items-center gap-6 font-mono text-xs tracking-wide uppercase text-[var(--mist)]">
                     <a href="{{ route('policy.show') }}" class="hover:text-[var(--paper)] transition-colors">Privacy</a>

@@ -41,13 +41,6 @@
             .font-display { font-family: var(--font-display); }
             .font-mono { font-family: var(--font-mono); }
 
-            /* Real logo's navy chevron/wordmark is low-contrast directly on --ink
-               (matches the contrast defect documented in wiki 1.4.0 for the welcome
-               page's nav/footer marks). A thin light rim (stacked drop-shadows, not
-               a recolor) keeps every part of the authentic logo legible. */
-            .brand-mark {
-                filter: drop-shadow(0 0 1px rgba(238, 244, 243, 0.9)) drop-shadow(0 0 1px rgba(238, 244, 243, 0.9)) drop-shadow(0 0 2px rgba(238, 244, 243, 0.55));
-            }
         </style>
     </head>
     <body>
