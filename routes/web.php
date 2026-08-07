@@ -7,11 +7,23 @@ use App\Models\PulsePost;
 use App\Models\PulseProfile;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
+use Laravel\Jetstream\Jetstream;
 
 Route::get('/auth/ecosystem', [EcosystemAuthController::class, 'handle'])
     ->name('ecosystem.auth');
 
 Route::get('/', fn () => view('welcome'));
+
+// Cookie Policy — Jetstream's termsAndPrivacyPolicy feature covers terms.show/policy.show
+// natively (registered at /terms-of-service and /privacy-policy, reading resources/markdown/
+// terms.md and policy.md). There's no Jetstream equivalent for a Cookie Policy, so this one is
+// wired by hand, following the exact same Markdown-source convention.
+Route::get('/cookies', function () {
+    return view('cookies', [
+        'cookies' => Str::markdown(file_get_contents(Jetstream::localizedMarkdownPath('cookies.md'))),
+    ]);
+})->name('cookies');
 
 Route::middleware([
     'auth:sanctum',
