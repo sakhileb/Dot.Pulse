@@ -28,14 +28,14 @@ class CommentController extends Controller
     public function store(Request $request, int $postId): JsonResponse
     {
         $request->validate([
-            'body'      => 'required|string|min:2|max:5000',
+            'body' => 'required|string|min:2|max:5000',
             'parent_id' => 'nullable|exists:pulse_comments,id',
         ]);
 
         $comment = app(AddComment::class)->handle(
-            postId:   $postId,
-            userId:   $request->user()->id,
-            body:     $request->body,
+            postId: $postId,
+            userId: $request->user()->id,
+            body: $request->body,
             parentId: $request->parent_id,
         );
 

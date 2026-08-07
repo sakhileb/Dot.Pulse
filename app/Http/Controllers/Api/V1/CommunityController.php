@@ -35,19 +35,19 @@ class CommunityController extends Controller
     public function store(Request $request): JsonResponse
     {
         $request->validate([
-            'name'        => 'required|min:3|max:80|unique:communities,name',
+            'name' => 'required|min:3|max:80|unique:communities,name',
             'description' => 'nullable|max:500',
-            'industry'    => 'nullable|max:60',
-            'visibility'  => 'required|in:public,private,enterprise',
+            'industry' => 'nullable|max:60',
+            'visibility' => 'required|in:public,private,enterprise',
         ]);
 
         $community = app(CreateCommunity::class)->handle(
-            userId:      $request->user()->id,
-            name:        $request->name,
+            userId: $request->user()->id,
+            name: $request->name,
             description: $request->description ?? '',
-            industry:    $request->industry ?? '',
-            visibility:  $request->visibility,
-            teamId:      $request->user()->currentTeam?->id,
+            industry: $request->industry ?? '',
+            visibility: $request->visibility,
+            teamId: $request->user()->currentTeam?->id,
         );
 
         return response()->json($community, 201);
@@ -63,8 +63,8 @@ class CommunityController extends Controller
 
         CommunityMembership::create([
             'community_id' => $community->id,
-            'user_id'      => $request->user()->id,
-            'role'         => 'member',
+            'user_id' => $request->user()->id,
+            'role' => 'member',
         ]);
         $community->increment('members_count');
 

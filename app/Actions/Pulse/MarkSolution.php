@@ -4,8 +4,8 @@ namespace App\Actions\Pulse;
 
 use App\Models\PulseComment;
 use App\Models\PulseProfile;
-use App\Models\User;
 use App\Notifications\SolutionAccepted;
+use App\Services\BadgeAwarder;
 
 class MarkSolution
 {
@@ -38,7 +38,7 @@ class MarkSolution
         }
 
         // Award solution-giver badge
-        app(\App\Services\BadgeAwarder::class)->checkAll($comment->author);
+        app(BadgeAwarder::class)->checkAll($comment->author);
 
         // Notify the comment author (not self)
         if ($comment->user_id !== $requestingUserId) {

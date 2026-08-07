@@ -26,12 +26,12 @@ class SolutionAccepted extends Notification implements ShouldQueue
     public function toDatabase(object $notifiable): array
     {
         return [
-            'type'       => 'solution',
-            'message'    => "Your answer was accepted as the solution on \"{$this->post->title}\"",
-            'post_id'    => $this->post->id,
+            'type' => 'solution',
+            'message' => "Your answer was accepted as the solution on \"{$this->post->title}\"",
+            'post_id' => $this->post->id,
             'post_title' => $this->post->title ?? Str::limit($this->post->body, 60),
             'comment_id' => $this->comment->id,
-            'url'        => route('posts.show', $this->post->id) . '#comment-' . $this->comment->id,
+            'url' => route('posts.show', $this->post->id).'#comment-'.$this->comment->id,
         ];
     }
 }

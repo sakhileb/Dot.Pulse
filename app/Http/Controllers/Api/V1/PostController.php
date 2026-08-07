@@ -7,7 +7,6 @@ use App\Http\Controllers\Controller;
 use App\Jobs\EnrichPost;
 use App\Models\PulsePost;
 use App\Models\PulseProfile;
-use App\Models\PulseReaction;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -40,20 +39,20 @@ class PostController extends Controller
     public function store(Request $request): JsonResponse
     {
         $request->validate([
-            'type'         => 'required|in:' . implode(',', PulsePost::$types),
-            'title'        => 'nullable|string|max:200',
-            'body'         => 'required|string|min:10|max:10000',
+            'type' => 'required|in:'.implode(',', PulsePost::$types),
+            'title' => 'nullable|string|max:200',
+            'body' => 'required|string|min:10|max:10000',
             'community_id' => 'nullable|exists:communities,id',
         ]);
 
         $post = PulsePost::create([
-            'user_id'      => $request->user()->id,
+            'user_id' => $request->user()->id,
             'community_id' => $request->community_id,
-            'team_id'      => $request->user()->currentTeam?->id,
-            'type'         => $request->type,
-            'title'        => $request->title,
-            'body'         => $request->body,
-            'status'       => 'pending',
+            'team_id' => $request->user()->currentTeam?->id,
+            'type' => $request->type,
+            'title' => $request->title,
+            'body' => $request->body,
+            'status' => 'pending',
         ]);
 
         $profile = PulseProfile::where('user_id', $request->user()->id)->first();
@@ -87,6 +86,7 @@ class PostController extends Controller
         if ($existing) {
             $existing->delete();
             $post->decrement('reactions_count');
+
             return response()->json(['reacted' => false, 'count' => $post->reactions_count]);
         }
 
@@ -99,16 +99,16 @@ class PostController extends Controller
     public function report(Request $request, int $id): JsonResponse
     {
         $request->validate([
-            'reason'  => 'required|string|min:3|max:100',
+            'reason' => 'required|string|min:3|max:100',
             'details' => 'nullable|string|max:500',
         ]);
 
         $report = app(ReportContent::class)->handle(
             reporterId: $request->user()->id,
-            morphType:  PulsePost::class,
-            morphId:    $id,
-            reason:     $request->reason,
-            details:    $request->details ?? '',
+            morphType: PulsePost::class,
+            morphId: $id,
+            reason: $request->reason,
+            details: $request->details ?? '',
         );
 
         return response()->json($report, 201);

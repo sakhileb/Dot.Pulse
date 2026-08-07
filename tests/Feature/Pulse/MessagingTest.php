@@ -2,10 +2,12 @@
 
 namespace Tests\Feature\Pulse;
 
+use App\Actions\Pulse\SendMessage;
 use App\Models\PulseConversation;
 use App\Models\PulseProfile;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 use Tests\TestCase;
 
 class MessagingTest extends TestCase
@@ -13,13 +15,14 @@ class MessagingTest extends TestCase
     use RefreshDatabase;
 
     private User $alice;
+
     private User $bob;
 
     protected function setUp(): void
     {
         parent::setUp();
         $this->alice = User::factory()->withPersonalTeam()->create();
-        $this->bob   = User::factory()->withPersonalTeam()->create();
+        $this->bob = User::factory()->withPersonalTeam()->create();
         PulseProfile::factory()->create(['user_id' => $this->alice->id]);
         PulseProfile::factory()->create(['user_id' => $this->bob->id]);
     }
@@ -35,7 +38,7 @@ class MessagingTest extends TestCase
 
     public function test_direct_between_is_idempotent(): void
     {
-        $first  = PulseConversation::directBetween($this->alice->id, $this->bob->id);
+        $first = PulseConversation::directBetween($this->alice->id, $this->bob->id);
         $second = PulseConversation::directBetween($this->alice->id, $this->bob->id);
 
         $this->assertEquals($first->id, $second->id);
@@ -46,30 +49,30 @@ class MessagingTest extends TestCase
     {
         $conv = PulseConversation::directBetween($this->alice->id, $this->bob->id);
 
-        app(\App\Actions\Pulse\SendMessage::class)->handle(
+        app(SendMessage::class)->handle(
             conversationId: $conv->id,
-            senderId:       $this->alice->id,
-            body:           'Hello Bob!',
+            senderId: $this->alice->id,
+            body: 'Hello Bob!',
         );
 
         $this->assertDatabaseHas('pulse_messages', [
             'pulse_conversation_id' => $conv->id,
-            'user_id'               => $this->alice->id,
-            'body'                  => 'Hello Bob!',
+            'user_id' => $this->alice->id,
+            'body' => 'Hello Bob!',
         ]);
     }
 
     public function test_non_participant_cannot_send_message(): void
     {
-        $conv  = PulseConversation::directBetween($this->alice->id, $this->bob->id);
+        $conv = PulseConversation::directBetween($this->alice->id, $this->bob->id);
         $carol = User::factory()->withPersonalTeam()->create();
 
-        $this->expectException(\Symfony\Component\HttpKernel\Exception\HttpException::class);
+        $this->expectException(HttpException::class);
 
-        app(\App\Actions\Pulse\SendMessage::class)->handle(
+        app(SendMessage::class)->handle(
             conversationId: $conv->id,
-            senderId:       $carol->id,
-            body:           'Unauthorized message',
+            senderId: $carol->id,
+            body: 'Unauthorized message',
         );
     }
 

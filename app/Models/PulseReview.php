@@ -18,7 +18,7 @@ class PulseReview extends Model
     protected $casts = [
         'is_verified' => 'boolean',
         'fraud_score' => 'float',
-        'rating'      => 'integer',
+        'rating' => 'integer',
     ];
 
     public function author(): BelongsTo

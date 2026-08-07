@@ -2,8 +2,8 @@
 
 namespace App\Jobs;
 
-use App\Services\AiModerationService;
 use App\Models\PulsePost;
+use App\Services\AiModerationService;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -14,7 +14,8 @@ class EnrichPost implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    public int $tries   = 3;
+    public int $tries = 3;
+
     public int $timeout = 60;
 
     public array $backoff = [10, 30, 60];

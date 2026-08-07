@@ -15,10 +15,6 @@ use App\Models\PulseProfile;
 use App\Models\PulseReaction;
 use App\Models\Team;
 use App\Models\User;
-use Database\Factories\CommunityFactory;
-use Database\Factories\PulseCommentFactory;
-use Database\Factories\PulsePostFactory;
-use Database\Factories\PulseProfileFactory;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
@@ -31,8 +27,8 @@ class PulseSeeder extends Seeder
         $admin = User::firstOrCreate(
             ['email' => 'admin@pulse.test'],
             [
-                'name'              => 'Pulse Admin',
-                'password'          => Hash::make('password'),
+                'name' => 'Pulse Admin',
+                'password' => Hash::make('password'),
                 'email_verified_at' => now(),
             ],
         );
@@ -45,11 +41,11 @@ class PulseSeeder extends Seeder
         PulseProfile::firstOrCreate(
             ['user_id' => $admin->id],
             [
-                'headline'          => 'Platform Administrator',
-                'bio'               => 'Keeping the community healthy and productive.',
-                'role'              => 'admin',
-                'community_points'  => 9999,
-                'is_verified'       => true,
+                'headline' => 'Platform Administrator',
+                'bio' => 'Keeping the community healthy and productive.',
+                'role' => 'admin',
+                'community_points' => 9999,
+                'is_verified' => true,
             ],
         );
 
@@ -78,20 +74,20 @@ class PulseSeeder extends Seeder
         foreach ($communityData as $data) {
             $creator = $allUsers->random();
             $community = Community::create([
-                'created_by'    => $creator->id,
-                'name'          => $data['name'],
-                'slug'          => Str::slug($data['name']),
-                'description'   => fake()->paragraph(2),
-                'industry'      => $data['industry'],
-                'visibility'    => 'public',
+                'created_by' => $creator->id,
+                'name' => $data['name'],
+                'slug' => Str::slug($data['name']),
+                'description' => fake()->paragraph(2),
+                'industry' => $data['industry'],
+                'visibility' => 'public',
                 'members_count' => 0,
             ]);
 
             // Creator is admin member
             CommunityMembership::create([
                 'community_id' => $community->id,
-                'user_id'      => $creator->id,
-                'role'         => 'admin',
+                'user_id' => $creator->id,
+                'role' => 'admin',
             ]);
             $community->increment('members_count');
 
@@ -115,7 +111,7 @@ class PulseSeeder extends Seeder
         // ── 5. Posts (60) ──────────────────────────────────────────────
         $posts = collect();
         for ($i = 0; $i < 60; $i++) {
-            $author    = $allUsers->random();
+            $author = $allUsers->random();
             $community = $communities->random();
 
             $post = PulsePost::factory()
@@ -131,18 +127,18 @@ class PulseSeeder extends Seeder
 
             // Auto-enrich with mock data
             PulsePostEnrichment::create([
-                'pulse_post_id'       => $post->id,
-                'summary'             => fake()->sentence(15),
-                'tags'                => fake()->words(3),
-                'sentiment'           => fake()->randomElement(['positive', 'positive', 'neutral', 'mixed']),
-                'topics'              => fake()->words(2),
-                'keywords'            => fake()->words(4),
-                'language'            => 'en',
-                'spam_score'          => fake()->randomFloat(2, 0, 0.1),
-                'safety_score'        => fake()->randomFloat(2, 0.85, 1.0),
-                'business_relevance'  => fake()->randomFloat(2, 0.5, 1.0),
-                'community_score'     => fake()->randomFloat(2, 0.4, 0.9),
-                'moderation_status'   => 'approved',
+                'pulse_post_id' => $post->id,
+                'summary' => fake()->sentence(15),
+                'tags' => fake()->words(3),
+                'sentiment' => fake()->randomElement(['positive', 'positive', 'neutral', 'mixed']),
+                'topics' => fake()->words(2),
+                'keywords' => fake()->words(4),
+                'language' => 'en',
+                'spam_score' => fake()->randomFloat(2, 0, 0.1),
+                'safety_score' => fake()->randomFloat(2, 0.85, 1.0),
+                'business_relevance' => fake()->randomFloat(2, 0.5, 1.0),
+                'community_score' => fake()->randomFloat(2, 0.4, 0.9),
+                'moderation_status' => 'approved',
             ]);
 
             $posts->push($post);
@@ -151,13 +147,13 @@ class PulseSeeder extends Seeder
         // ── 6. Comments (120) ─────────────────────────────────────────
         foreach ($posts->random(50) as $post) {
             $commentCount = rand(1, 5);
-            $topComments  = collect();
+            $topComments = collect();
 
             for ($c = 0; $c < $commentCount; $c++) {
                 $commenter = $allUsers->random();
                 $comment = PulseComment::factory()->create([
                     'pulse_post_id' => $post->id,
-                    'user_id'       => $commenter->id,
+                    'user_id' => $commenter->id,
                 ]);
                 $post->increment('comments_count');
                 $topComments->push($comment);
@@ -169,8 +165,8 @@ class PulseSeeder extends Seeder
                 $replier = $allUsers->random();
                 PulseComment::factory()->create([
                     'pulse_post_id' => $post->id,
-                    'user_id'       => $replier->id,
-                    'parent_id'     => $parent->id,
+                    'user_id' => $replier->id,
+                    'parent_id' => $parent->id,
                 ]);
                 $post->increment('comments_count');
             }
@@ -198,7 +194,7 @@ class PulseSeeder extends Seeder
             $toFollow = $allUsers->where('id', '!=', $user->id)->random(rand(2, 5));
             foreach ($toFollow as $following) {
                 PulseFollower::firstOrCreate([
-                    'follower_id'  => $user->id,
+                    'follower_id' => $user->id,
                     'following_id' => $following->id,
                 ]);
             }
@@ -211,19 +207,19 @@ class PulseSeeder extends Seeder
             ['title' => 'Sales Dashboard Template',     'category' => 'dashboard',  'description' => 'Beautiful sales KPI dashboard with 30+ metrics pre-wired.'],
             ['title' => 'Customer Onboarding Template', 'category' => 'template',   'description' => 'Plug-and-play customer onboarding sequence with 12 touchpoints.'],
             ['title' => 'OpenAI Prompt Library',        'category' => 'prompt_library', 'description' => '200+ battle-tested prompts for business automation scenarios.'],
-            ['title' => 'WhatsApp Business Integration','category' => 'integration', 'description' => 'Bi-directional WhatsApp integration for customer communication.'],
+            ['title' => 'WhatsApp Business Integration', 'category' => 'integration', 'description' => 'Bi-directional WhatsApp integration for customer communication.'],
         ];
 
         foreach ($marketplaceItems as $item) {
             PulseMarketplaceItem::create([
-                'user_id'        => $allUsers->random()->id,
-                'title'          => $item['title'],
-                'description'    => $item['description'],
-                'category'       => $item['category'],
-                'version'        => '1.0.' . rand(0, 9),
+                'user_id' => $allUsers->random()->id,
+                'title' => $item['title'],
+                'description' => $item['description'],
+                'category' => $item['category'],
+                'version' => '1.0.'.rand(0, 9),
                 'installs_count' => rand(5, 800),
-                'avg_rating'     => round(rand(35, 50) / 10, 1),
-                'is_published'   => true,
+                'avg_rating' => round(rand(35, 50) / 10, 1),
+                'is_published' => true,
             ]);
         }
 
@@ -233,7 +229,7 @@ class PulseSeeder extends Seeder
             ['key' => 'solution_giver', 'label' => 'Problem Solver',  'icon' => 'check_circle',   'category' => 'community'],
             ['key' => 'ai_builder',     'label' => 'AI Builder',      'icon' => 'smart_toy',      'category' => 'expertise'],
             ['key' => 'mentor',         'label' => 'Mentor',          'icon' => 'school',         'category' => 'reputation'],
-            ['key' => 'verified_expert','label' => 'Verified Expert', 'icon' => 'verified',       'category' => 'reputation'],
+            ['key' => 'verified_expert', 'label' => 'Verified Expert', 'icon' => 'verified',       'category' => 'reputation'],
             ['key' => 'streak_7',       'label' => '7-Day Streak',    'icon' => 'local_fire_department', 'category' => 'gamification'],
         ];
 
@@ -244,7 +240,7 @@ class PulseSeeder extends Seeder
         }
 
         $this->command->info('✓ Pulse seeder complete.');
-        $this->command->info("  Admin login: admin@pulse.test / password");
-        $this->command->info("  Created: 16 users, 8 communities, 60 posts, ~120 comments");
+        $this->command->info('  Admin login: admin@pulse.test / password');
+        $this->command->info('  Created: 16 users, 8 communities, 60 posts, ~120 comments');
     }
 }

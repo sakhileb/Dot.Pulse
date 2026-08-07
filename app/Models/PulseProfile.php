@@ -5,7 +5,6 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class PulseProfile extends Model
 {
@@ -18,9 +17,9 @@ class PulseProfile extends Model
     ];
 
     protected $casts = [
-        'skills'          => 'array',
-        'expertise_tags'  => 'array',
-        'is_verified'     => 'boolean',
+        'skills' => 'array',
+        'expertise_tags' => 'array',
+        'is_verified' => 'boolean',
         'community_points' => 'integer',
     ];
 

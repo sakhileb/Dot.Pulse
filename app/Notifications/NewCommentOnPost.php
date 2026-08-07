@@ -26,13 +26,13 @@ class NewCommentOnPost extends Notification implements ShouldQueue
     public function toDatabase(object $notifiable): array
     {
         return [
-            'type'       => 'comment',
-            'message'    => "{$this->comment->author->name} commented on your post",
-            'post_id'    => $this->post->id,
+            'type' => 'comment',
+            'message' => "{$this->comment->author->name} commented on your post",
+            'post_id' => $this->post->id,
             'post_title' => $this->post->title ?? Str::limit($this->post->body, 60),
             'comment_id' => $this->comment->id,
             'actor_name' => $this->comment->author->name,
-            'url'        => route('posts.show', $this->post->id),
+            'url' => route('posts.show', $this->post->id),
         ];
     }
 }

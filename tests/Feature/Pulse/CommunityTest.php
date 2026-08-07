@@ -25,11 +25,11 @@ class CommunityTest extends TestCase
     public function test_can_create_community_via_action(): void
     {
         $community = app(CreateCommunity::class)->handle(
-            userId:      $this->user->id,
-            name:        'Fleet Managers',
+            userId: $this->user->id,
+            name: 'Fleet Managers',
             description: 'For fleet operators',
-            industry:    'Fleet Management',
-            visibility:  'public',
+            industry: 'Fleet Management',
+            visibility: 'public',
         );
 
         $this->assertDatabaseHas('communities', ['slug' => 'fleet-managers']);
@@ -39,15 +39,15 @@ class CommunityTest extends TestCase
     public function test_creator_automatically_becomes_admin_member(): void
     {
         $community = app(CreateCommunity::class)->handle(
-            userId:     $this->user->id,
-            name:       'AI Builders',
+            userId: $this->user->id,
+            name: 'AI Builders',
             visibility: 'public',
         );
 
         $this->assertDatabaseHas('community_memberships', [
             'community_id' => $community->id,
-            'user_id'      => $this->user->id,
-            'role'         => 'admin',
+            'user_id' => $this->user->id,
+            'role' => 'admin',
         ]);
     }
 
@@ -95,7 +95,7 @@ class CommunityTest extends TestCase
     public function test_community_policy_blocks_private_community_for_non_member(): void
     {
         $private = Community::factory()->create(['visibility' => 'private']);
-        $other   = User::factory()->withPersonalTeam()->create();
+        $other = User::factory()->withPersonalTeam()->create();
 
         $this->actingAs($other)
             ->getJson("/api/v1/communities/{$private->slug}")

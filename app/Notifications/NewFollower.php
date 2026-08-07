@@ -21,11 +21,11 @@ class NewFollower extends Notification implements ShouldQueue
     public function toDatabase(object $notifiable): array
     {
         return [
-            'type'        => 'follow',
-            'message'     => "{$this->follower->name} started following you",
-            'actor_name'  => $this->follower->name,
-            'actor_id'    => $this->follower->id,
-            'url'         => route('profile.public', $this->follower->name),
+            'type' => 'follow',
+            'message' => "{$this->follower->name} started following you",
+            'actor_name' => $this->follower->name,
+            'actor_id' => $this->follower->id,
+            'url' => route('profile.public', $this->follower->name),
         ];
     }
 }

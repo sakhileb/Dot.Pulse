@@ -5,9 +5,10 @@ namespace App\Livewire\Pulse;
 use App\Models\PulseEvent;
 use App\Models\PulseEventRsvp;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\View\View;
 use Livewire\Attributes\Computed;
 use Livewire\Component;
-use Illuminate\Support\Facades\Auth;
 
 class EventsList extends Component
 {
@@ -42,8 +43,8 @@ class EventsList extends Component
         } else {
             PulseEventRsvp::create([
                 'pulse_event_id' => $eventId,
-                'user_id'        => Auth::id(),
-                'status'         => $status,
+                'user_id' => Auth::id(),
+                'status' => $status,
             ]);
             $event->increment('rsvps_count');
         }
@@ -51,7 +52,7 @@ class EventsList extends Component
         unset($this->events);
     }
 
-    public function render(): \Illuminate\View\View
+    public function render(): View
     {
         return view('livewire.pulse.events-list');
     }

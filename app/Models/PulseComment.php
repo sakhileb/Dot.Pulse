@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
 class PulseComment extends Model
 {
     use HasFactory;
+
     protected $table = 'pulse_comments';
 
     protected $fillable = [

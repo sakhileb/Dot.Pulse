@@ -6,19 +6,20 @@ use App\Actions\Pulse\SendMessage;
 use App\Models\PulseConversation;
 use App\Models\User;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\View\View;
 use Livewire\Attributes\Computed;
-use Livewire\Attributes\On;
 use Livewire\Attributes\Url;
 use Livewire\Component;
-use Illuminate\Support\Facades\Auth;
 
 class Messaging extends Component
 {
     #[Url]
     public ?int $conversationId = null;
 
-    public string $messageBody  = '';
-    public string $searchUser   = '';
+    public string $messageBody = '';
+
+    public string $searchUser = '';
 
     public function mount(?int $activeId = null): void
     {
@@ -55,7 +56,7 @@ class Messaging extends Component
         }
 
         return User::where('id', '!=', Auth::id())
-            ->where('name', 'like', '%' . $this->searchUser . '%')
+            ->where('name', 'like', '%'.$this->searchUser.'%')
             ->limit(8)
             ->get();
     }
@@ -70,7 +71,7 @@ class Messaging extends Component
     {
         $conversation = PulseConversation::directBetween(Auth::id(), $userId);
         $this->conversationId = $conversation->id;
-        $this->searchUser     = '';
+        $this->searchUser = '';
         unset($this->conversations, $this->activeConversation, $this->userSearchResults);
     }
 
@@ -84,8 +85,8 @@ class Messaging extends Component
 
         app(SendMessage::class)->handle(
             conversationId: $this->conversationId,
-            senderId:       Auth::id(),
-            body:           $this->messageBody,
+            senderId: Auth::id(),
+            body: $this->messageBody,
         );
 
         $this->messageBody = '';
@@ -121,7 +122,7 @@ class Messaging extends Component
             ->firstWhere('id', '!=', Auth::id());
     }
 
-    public function render(): \Illuminate\View\View
+    public function render(): View
     {
         return view('livewire.pulse.messaging');
     }

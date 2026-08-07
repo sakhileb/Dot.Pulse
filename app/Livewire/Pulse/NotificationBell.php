@@ -3,9 +3,10 @@
 namespace App\Livewire\Pulse;
 
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\View\View;
 use Livewire\Attributes\Computed;
 use Livewire\Component;
-use Illuminate\Support\Facades\Auth;
 
 class NotificationBell extends Component
 {
@@ -37,7 +38,7 @@ class NotificationBell extends Component
         unset($this->unreadCount, $this->recent);
     }
 
-    public function render(): \Illuminate\View\View
+    public function render(): View
     {
         return view('livewire.pulse.notification-bell');
     }

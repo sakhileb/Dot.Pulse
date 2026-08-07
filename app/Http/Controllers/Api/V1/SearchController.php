@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
 use App\Models\Community;
-use App\Models\PulseHashtag;
 use App\Models\PulsePost;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
@@ -15,7 +14,7 @@ class SearchController extends Controller
     public function __invoke(Request $request): JsonResponse
     {
         $request->validate(['q' => 'required|string|min:2|max:100']);
-        $q = '%' . $request->q . '%';
+        $q = '%'.$request->q.'%';
 
         return response()->json([
             'posts' => PulsePost::with('author:id,name')

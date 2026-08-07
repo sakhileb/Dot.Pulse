@@ -6,14 +6,17 @@ use App\Models\Community;
 use App\Models\CommunityMembership;
 use App\Models\PulsePost;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\View\View;
 use Livewire\Attributes\Computed;
 use Livewire\Component;
-use Illuminate\Support\Facades\Auth;
 
 class CommunityDetail extends Component
 {
     public Community $community;
-    public string $tab        = 'posts';
+
+    public string $tab = 'posts';
+
     public string $filterType = '';
 
     public function mount(Community $community): void
@@ -66,8 +69,8 @@ class CommunityDetail extends Component
 
         CommunityMembership::create([
             'community_id' => $this->community->id,
-            'user_id'      => Auth::id(),
-            'role'         => 'member',
+            'user_id' => Auth::id(),
+            'role' => 'member',
         ]);
 
         $this->community->increment('members_count');
@@ -85,6 +88,7 @@ class CommunityDetail extends Component
 
         if ($isOnlyAdmin) {
             $this->addError('leave', 'You are the only admin. Transfer admin rights before leaving.');
+
             return;
         }
 
@@ -103,7 +107,7 @@ class CommunityDetail extends Component
         unset($this->posts, $this->members);
     }
 
-    public function render(): \Illuminate\View\View
+    public function render(): View
     {
         return view('livewire.pulse.community-detail');
     }

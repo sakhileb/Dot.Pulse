@@ -42,9 +42,9 @@ class BadgeAwarder
         }
 
         PulseUserBadge::create([
-            'user_id'        => $user->id,
+            'user_id' => $user->id,
             'pulse_badge_id' => $badge->id,
-            'awarded_at'     => now(),
+            'awarded_at' => now(),
         ]);
 
         return true;

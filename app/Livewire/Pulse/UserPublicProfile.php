@@ -10,19 +10,22 @@ use App\Models\PulseProfile;
 use App\Models\PulseUserBadge;
 use App\Models\User;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\View\View;
 use Livewire\Attributes\Computed;
 use Livewire\Component;
-use Illuminate\Support\Facades\Auth;
 
 class UserPublicProfile extends Component
 {
     public User $user;
+
     public PulseProfile $profile;
+
     public string $tab = 'posts';
 
     public function mount(User $user, PulseProfile $profile): void
     {
-        $this->user    = $user;
+        $this->user = $user;
         $this->profile = $profile;
     }
 
@@ -97,7 +100,7 @@ class UserPublicProfile extends Component
         $this->tab = $tab;
     }
 
-    public function render(): \Illuminate\View\View
+    public function render(): View
     {
         return view('livewire.pulse.user-public-profile');
     }

@@ -2,11 +2,12 @@
 
 namespace App\Services;
 
-use Illuminate\Support\Str;
 use App\Models\PulseKnowledgeEdge;
 use App\Models\PulseKnowledgeNode;
 use App\Models\PulsePost;
 use App\Models\PulsePostEnrichment;
+use App\Models\PulseProfile;
+use Illuminate\Support\Str;
 
 class KnowledgeGraphService
 {
@@ -21,7 +22,7 @@ class KnowledgeGraphService
         }
 
         // Create a "concept" node for each topic tag
-        $topics   = $enrichment->topics  ?? [];
+        $topics = $enrichment->topics ?? [];
         $keywords = $enrichment->keywords ?? [];
 
         $topicNodes = collect($topics)->take(5)->map(function (string $topic) use ($post) {
@@ -47,7 +48,7 @@ class KnowledgeGraphService
         }
 
         // Link expert (post author) to topics if they have solutions_accepted > 0
-        $profile = \App\Models\PulseProfile::where('user_id', $post->user_id)->first();
+        $profile = PulseProfile::where('user_id', $post->user_id)->first();
         if ($profile && $profile->solutions_accepted > 0) {
             $expertNode = $this->upsertNode('expert', $post->author->name, null, [
                 'user_id' => $post->user_id,
@@ -63,8 +64,8 @@ class KnowledgeGraphService
         return PulseKnowledgeNode::firstOrCreate(
             ['entity_type' => $entityType, 'label' => $label],
             [
-                'description'      => $description,
-                'sources'          => $sources,
+                'description' => $description,
+                'sources' => $sources,
                 'confidence_score' => 50,
             ]
         );

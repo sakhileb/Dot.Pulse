@@ -29,11 +29,11 @@ class CommentPosted implements ShouldBroadcast
     public function broadcastWith(): array
     {
         return [
-            'id'             => $this->comment->id,
-            'pulse_post_id'  => $this->comment->pulse_post_id,
-            'parent_id'      => $this->comment->parent_id,
-            'author'         => $this->comment->author->name,
-            'body_preview'   => Str::limit($this->comment->body, 80),
+            'id' => $this->comment->id,
+            'pulse_post_id' => $this->comment->pulse_post_id,
+            'parent_id' => $this->comment->parent_id,
+            'author' => $this->comment->author->name,
+            'body_preview' => Str::limit($this->comment->body, 80),
         ];
     }
 }

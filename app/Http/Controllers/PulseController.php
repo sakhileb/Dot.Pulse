@@ -3,14 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\Community;
-use App\Models\PulseEvent;
-use App\Models\PulseMarketplaceItem;
 use App\Models\PulsePost;
 use App\Models\PulseProfile;
 use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\View\View;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\View\View;
 
 class PulseController extends Controller
 {
@@ -45,7 +43,7 @@ class PulseController extends Controller
 
     public function profile(string $username): View
     {
-        $user    = User::where('name', $username)->firstOrFail();
+        $user = User::where('name', $username)->firstOrFail();
         $profile = PulseProfile::firstOrCreate(
             ['user_id' => $user->id],
             ['role' => 'customer'],
@@ -88,8 +86,8 @@ class PulseController extends Controller
 
     public function moderation(): View
     {
-        /** @var \App\Models\User $user */
-        $user    = Auth::user();
+        /** @var User $user */
+        $user = Auth::user();
         $profile = $user->profile ?? PulseProfile::where('user_id', $user->id)->first();
 
         abort_unless(

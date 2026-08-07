@@ -30,6 +30,7 @@ class CommentPolicy
     private function isModerator(User $user): bool
     {
         $profile = PulseProfile::where('user_id', $user->id)->first();
+
         return $profile && in_array($profile->role, ['moderator', 'admin']);
     }
 }

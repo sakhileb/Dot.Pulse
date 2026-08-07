@@ -8,14 +8,14 @@ use Illuminate\Support\Facades\RateLimiter;
 class ReportContent
 {
     public function handle(
-        int    $reporterId,
+        int $reporterId,
         string $morphType,
-        int    $morphId,
+        int $morphId,
         string $reason,
         string $details = '',
     ): PulseReport {
         abort_unless(
-            RateLimiter::attempt('pulse-report:' . $reporterId, 5, fn () => true),
+            RateLimiter::attempt('pulse-report:'.$reporterId, 5, fn () => true),
             429,
             'Too many reports submitted. Please wait before submitting more.',
         );
@@ -32,12 +32,12 @@ class ReportContent
         }
 
         return PulseReport::create([
-            'reporter_id'     => $reporterId,
+            'reporter_id' => $reporterId,
             'reportable_type' => $morphType,
-            'reportable_id'   => $morphId,
-            'reason'          => $reason,
-            'details'         => $details ?: null,
-            'status'          => 'open',
+            'reportable_id' => $morphId,
+            'reason' => $reason,
+            'details' => $details ?: null,
+            'status' => 'open',
         ]);
     }
 }

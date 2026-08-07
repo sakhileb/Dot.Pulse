@@ -11,8 +11,16 @@ class PulseMarketplaceInstall extends Model
     use HasUserScope;
 
     protected $table = 'pulse_marketplace_installs';
+
     protected $fillable = ['pulse_marketplace_item_id', 'user_id'];
 
-    public function item(): BelongsTo { return $this->belongsTo(PulseMarketplaceItem::class, 'pulse_marketplace_item_id'); }
-    public function user(): BelongsTo { return $this->belongsTo(User::class); }
+    public function item(): BelongsTo
+    {
+        return $this->belongsTo(PulseMarketplaceItem::class, 'pulse_marketplace_item_id');
+    }
+
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
 }

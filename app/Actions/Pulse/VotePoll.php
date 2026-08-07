@@ -31,8 +31,8 @@ class VotePoll
             } else {
                 PulsePollVote::create([
                     'pulse_poll_id' => $poll->id,
-                    'user_id'       => $userId,
-                    'option_index'  => $optionIndex,
+                    'user_id' => $userId,
+                    'option_index' => $optionIndex,
                 ]);
                 $poll->increment('votes_count');
             }

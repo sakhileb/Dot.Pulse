@@ -28,10 +28,10 @@ class PulseUserScopeTest extends TestCase
         $post = PulsePost::factory()->create(['user_id' => $owner->id]);
 
         $reaction = PulseReaction::create([
-            'user_id'        => $owner->id,
+            'user_id' => $owner->id,
             'reactable_type' => PulsePost::class,
-            'reactable_id'   => $post->id,
-            'emoji'          => '👍',
+            'reactable_id' => $post->id,
+            'emoji' => '👍',
         ]);
 
         $this->actingAs($outsider);

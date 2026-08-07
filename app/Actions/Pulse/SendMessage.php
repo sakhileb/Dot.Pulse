@@ -24,8 +24,8 @@ class SendMessage
 
         $message = PulseMessage::create([
             'pulse_conversation_id' => $conversationId,
-            'user_id'               => $senderId,
-            'body'                  => $body,
+            'user_id' => $senderId,
+            'body' => $body,
         ]);
 
         MessageSent::dispatch($message->load('sender'));

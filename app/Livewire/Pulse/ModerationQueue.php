@@ -5,10 +5,12 @@ namespace App\Livewire\Pulse;
 use App\Models\PulseModerationLog;
 use App\Models\PulsePost;
 use App\Models\PulsePostEnrichment;
+use App\Models\PulseProfile;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\View\View;
 use Livewire\Attributes\Computed;
 use Livewire\Component;
-use Illuminate\Support\Facades\Auth;
 
 class ModerationQueue extends Component
 {
@@ -44,11 +46,11 @@ class ModerationQueue extends Component
         $enrichment->post->update(['status' => 'published']);
 
         PulseModerationLog::create([
-            'moderator_id'  => Auth::id(),
-            'target_type'   => PulsePost::class,
-            'target_id'     => $enrichment->pulse_post_id,
-            'action'        => 'approve',
-            'rationale'     => 'Manually approved via moderation queue.',
+            'moderator_id' => Auth::id(),
+            'target_type' => PulsePost::class,
+            'target_id' => $enrichment->pulse_post_id,
+            'action' => 'approve',
+            'rationale' => 'Manually approved via moderation queue.',
             'is_ai_decision' => false,
         ]);
 
@@ -64,11 +66,11 @@ class ModerationQueue extends Component
         $enrichment->post->update(['status' => 'removed']);
 
         PulseModerationLog::create([
-            'moderator_id'  => Auth::id(),
-            'target_type'   => PulsePost::class,
-            'target_id'     => $enrichment->pulse_post_id,
-            'action'        => 'reject',
-            'rationale'     => $rationale ?: 'Rejected via moderation queue.',
+            'moderator_id' => Auth::id(),
+            'target_type' => PulsePost::class,
+            'target_id' => $enrichment->pulse_post_id,
+            'action' => 'reject',
+            'rationale' => $rationale ?: 'Rejected via moderation queue.',
             'is_ai_decision' => false,
         ]);
 
@@ -83,7 +85,7 @@ class ModerationQueue extends Component
 
     private function authorizeModeratorAccess(): void
     {
-        $profile = \App\Models\PulseProfile::where('user_id', Auth::id())->first();
+        $profile = PulseProfile::where('user_id', Auth::id())->first();
 
         abort_unless(
             $profile && in_array($profile->role, ['moderator', 'admin']),
@@ -91,7 +93,7 @@ class ModerationQueue extends Component
         );
     }
 
-    public function render(): \Illuminate\View\View
+    public function render(): View
     {
         return view('livewire.pulse.moderation-queue');
     }

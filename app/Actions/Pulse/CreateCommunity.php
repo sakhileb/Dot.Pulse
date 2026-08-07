@@ -19,21 +19,21 @@ class CreateCommunity
         $slug = $this->uniqueSlug($name);
 
         $community = Community::create([
-            'created_by'  => $userId,
-            'team_id'     => $teamId,
-            'name'        => $name,
-            'slug'        => $slug,
+            'created_by' => $userId,
+            'team_id' => $teamId,
+            'name' => $name,
+            'slug' => $slug,
             'description' => $description ?: null,
-            'industry'    => $industry ?: null,
-            'visibility'  => $visibility,
+            'industry' => $industry ?: null,
+            'visibility' => $visibility,
             'members_count' => 1,
         ]);
 
         // Creator automatically becomes admin member
         CommunityMembership::create([
             'community_id' => $community->id,
-            'user_id'      => $userId,
-            'role'         => 'admin',
+            'user_id' => $userId,
+            'role' => 'admin',
         ]);
 
         return $community;
@@ -43,7 +43,7 @@ class CreateCommunity
     {
         $base = Str::slug($name);
         $slug = $base;
-        $i    = 2;
+        $i = 2;
 
         while (Community::where('slug', $slug)->exists()) {
             $slug = "{$base}-{$i}";

@@ -5,8 +5,8 @@ use App\Http\Controllers\PulseController;
 use App\Models\Community;
 use App\Models\PulsePost;
 use App\Models\PulseProfile;
-use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Str;
 use Laravel\Jetstream\Jetstream;
 
@@ -33,16 +33,16 @@ Route::middleware([
 
     // Dashboard
     Route::get('/dashboard', function () {
-        $user    = Auth::user();
+        $user = Auth::user();
         $profile = PulseProfile::firstOrCreate(
             ['user_id' => $user->id],
             ['role' => 'customer'],
         );
 
         return view('dashboard', [
-            'totalPosts'       => PulsePost::published()->count(),
+            'totalPosts' => PulsePost::published()->count(),
             'totalCommunities' => Community::count(),
-            'myPoints'         => $profile->community_points,
+            'myPoints' => $profile->community_points,
         ]);
     })->name('dashboard');
 

@@ -6,6 +6,8 @@ use App\Models\PulseComment;
 use App\Models\PulsePost;
 use App\Models\PulseProfile;
 use App\Models\User;
+use App\Notifications\MentionNotification;
+use App\Notifications\NewCommentOnPost;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Notification;
 use Tests\TestCase;
@@ -15,6 +17,7 @@ class CommentTest extends TestCase
     use RefreshDatabase;
 
     private User $user;
+
     private PulsePost $post;
 
     protected function setUp(): void
@@ -24,7 +27,7 @@ class CommentTest extends TestCase
         PulseProfile::factory()->create(['user_id' => $this->user->id]);
         $this->post = PulsePost::factory()->create([
             'user_id' => $this->user->id,
-            'status'  => 'published',
+            'status' => 'published',
         ]);
     }
 
@@ -39,7 +42,7 @@ class CommentTest extends TestCase
 
         $this->assertDatabaseHas('pulse_comments', [
             'pulse_post_id' => $this->post->id,
-            'user_id'       => $commenter->id,
+            'user_id' => $commenter->id,
         ]);
     }
 
@@ -60,7 +63,7 @@ class CommentTest extends TestCase
     public function test_comment_awards_points_to_commenter(): void
     {
         $commenter = User::factory()->withPersonalTeam()->create();
-        $profile   = PulseProfile::factory()->create(['user_id' => $commenter->id, 'community_points' => 0]);
+        $profile = PulseProfile::factory()->create(['user_id' => $commenter->id, 'community_points' => 0]);
 
         $this->actingAs($commenter)
             ->postJson("/api/v1/posts/{$this->post->id}/comments", ['body' => 'This helped me a lot, thank you!'])
@@ -80,7 +83,7 @@ class CommentTest extends TestCase
             ->postJson("/api/v1/posts/{$this->post->id}/comments", ['body' => 'Well explained, thanks for sharing this!'])
             ->assertCreated();
 
-        Notification::assertSentTo($this->user, \App\Notifications\NewCommentOnPost::class);
+        Notification::assertSentTo($this->user, NewCommentOnPost::class);
     }
 
     public function test_comment_does_not_notify_self(): void
@@ -91,14 +94,14 @@ class CommentTest extends TestCase
             ->postJson("/api/v1/posts/{$this->post->id}/comments", ['body' => 'Adding my own note to this post for context.'])
             ->assertCreated();
 
-        Notification::assertNotSentTo($this->user, \App\Notifications\NewCommentOnPost::class);
+        Notification::assertNotSentTo($this->user, NewCommentOnPost::class);
     }
 
     public function test_author_can_delete_own_comment(): void
     {
         $comment = PulseComment::factory()->create([
             'pulse_post_id' => $this->post->id,
-            'user_id'       => $this->user->id,
+            'user_id' => $this->user->id,
         ]);
 
         $this->actingAs($this->user)
@@ -111,14 +114,14 @@ class CommentTest extends TestCase
     public function test_user_cannot_delete_another_users_comment(): void
     {
         // Use a third user who is neither the comment author nor the post author
-        $commenter   = User::factory()->withPersonalTeam()->create();
-        $uninvolved  = User::factory()->withPersonalTeam()->create();
+        $commenter = User::factory()->withPersonalTeam()->create();
+        $uninvolved = User::factory()->withPersonalTeam()->create();
         PulseProfile::factory()->create(['user_id' => $commenter->id]);
         PulseProfile::factory()->create(['user_id' => $uninvolved->id]);
 
         $comment = PulseComment::factory()->create([
             'pulse_post_id' => $this->post->id,
-            'user_id'       => $commenter->id,
+            'user_id' => $commenter->id,
         ]);
 
         $this->actingAs($uninvolved)
@@ -142,6 +145,6 @@ class CommentTest extends TestCase
             ])
             ->assertCreated();
 
-        Notification::assertSentTo($mentioned, \App\Notifications\MentionNotification::class);
+        Notification::assertSentTo($mentioned, MentionNotification::class);
     }
 }

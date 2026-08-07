@@ -2,8 +2,8 @@
 
 namespace Tests\Feature\Pulse;
 
+use App\Jobs\EnrichPost;
 use App\Models\PulsePost;
-use App\Models\PulsePostEnrichment;
 use App\Models\PulseProfile;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -14,6 +14,7 @@ class ModerationTest extends TestCase
     use RefreshDatabase;
 
     private User $moderator;
+
     private User $regularUser;
 
     protected function setUp(): void
@@ -56,7 +57,7 @@ class ModerationTest extends TestCase
     {
         $post = PulsePost::factory()->create(['user_id' => $this->regularUser->id, 'status' => 'pending']);
 
-        $job = new \App\Jobs\EnrichPost($post);
+        $job = new EnrichPost($post);
         $job->failed(new \Exception('API unavailable'));
 
         $this->assertEquals('flagged', $post->fresh()->status);

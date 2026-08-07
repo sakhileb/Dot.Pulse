@@ -2,13 +2,13 @@
 
 namespace Tests\Feature\Pulse;
 
+use App\Livewire\Pulse\HomeFeed;
 use App\Models\PulsePost;
 use App\Models\PulseProfile;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
 use Tests\TestCase;
-use App\Livewire\Pulse\HomeFeed;
 
 class HomeFeedTest extends TestCase
 {
@@ -44,17 +44,17 @@ class HomeFeedTest extends TestCase
         PulsePost::factory()->create([
             'user_id' => $this->user->id,
             'team_id' => $this->user->currentTeam->id,
-            'type'    => 'discussion',
-            'body'    => 'A published discussion post visible in the feed.',
-            'status'  => 'published',
+            'type' => 'discussion',
+            'body' => 'A published discussion post visible in the feed.',
+            'status' => 'published',
         ]);
 
         PulsePost::factory()->create([
             'user_id' => $this->user->id,
             'team_id' => $this->user->currentTeam->id,
-            'type'    => 'discussion',
-            'body'    => 'A pending post that should not appear yet.',
-            'status'  => 'pending',
+            'type' => 'discussion',
+            'body' => 'A pending post that should not appear yet.',
+            'status' => 'pending',
         ]);
 
         Livewire::test(HomeFeed::class)
@@ -67,17 +67,17 @@ class HomeFeedTest extends TestCase
         PulsePost::factory()->create([
             'user_id' => $this->user->id,
             'team_id' => $this->user->currentTeam->id,
-            'type'    => 'question',
-            'body'    => 'A question post about the platform.',
-            'status'  => 'published',
+            'type' => 'question',
+            'body' => 'A question post about the platform.',
+            'status' => 'published',
         ]);
 
         PulsePost::factory()->create([
             'user_id' => $this->user->id,
             'team_id' => $this->user->currentTeam->id,
-            'type'    => 'idea',
-            'body'    => 'An idea post about the platform.',
-            'status'  => 'published',
+            'type' => 'idea',
+            'body' => 'An idea post about the platform.',
+            'status' => 'published',
         ]);
 
         Livewire::test(HomeFeed::class)
@@ -91,7 +91,7 @@ class HomeFeedTest extends TestCase
         PulsePost::factory()->create([
             'user_id' => $this->user->id,
             'team_id' => $this->user->currentTeam->id,
-            'status'  => 'published',
+            'status' => 'published',
         ]);
 
         $this->actingAs($this->user)

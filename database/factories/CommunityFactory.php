@@ -28,12 +28,12 @@ class CommunityFactory extends Factory
         $name = ucwords($name);
 
         return [
-            'created_by'    => User::factory(),
-            'name'          => $name,
-            'slug'          => Str::slug($name) . '-' . fake()->unique()->numberBetween(100, 999),
-            'description'   => fake()->paragraph(2),
-            'industry'      => fake()->randomElement($industries),
-            'visibility'    => fake()->randomElement(['public', 'public', 'public', 'private']),
+            'created_by' => User::factory(),
+            'name' => $name,
+            'slug' => Str::slug($name).'-'.fake()->unique()->numberBetween(100, 999),
+            'description' => fake()->paragraph(2),
+            'industry' => fake()->randomElement($industries),
+            'visibility' => fake()->randomElement(['public', 'public', 'public', 'private']),
             'members_count' => 0,
         ];
     }

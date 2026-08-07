@@ -2,9 +2,9 @@
 
 namespace Tests\Feature\Pulse;
 
-use App\Models\PulseFollower;
 use App\Models\PulseProfile;
 use App\Models\User;
+use App\Notifications\NewFollower;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Notification;
 use Tests\TestCase;
@@ -15,7 +15,7 @@ class FollowTest extends TestCase
 
     public function test_user_can_follow_another_user(): void
     {
-        $follower  = User::factory()->withPersonalTeam()->create();
+        $follower = User::factory()->withPersonalTeam()->create();
         $following = User::factory()->withPersonalTeam()->create();
         PulseProfile::factory()->create(['user_id' => $follower->id]);
         PulseProfile::factory()->create(['user_id' => $following->id]);
@@ -26,14 +26,14 @@ class FollowTest extends TestCase
             ->assertJsonPath('following', true);
 
         $this->assertDatabaseHas('pulse_followers', [
-            'follower_id'  => $follower->id,
+            'follower_id' => $follower->id,
             'following_id' => $following->id,
         ]);
     }
 
     public function test_following_again_unfollows(): void
     {
-        $follower  = User::factory()->withPersonalTeam()->create();
+        $follower = User::factory()->withPersonalTeam()->create();
         $following = User::factory()->withPersonalTeam()->create();
         PulseProfile::factory()->create(['user_id' => $follower->id]);
         PulseProfile::factory()->create(['user_id' => $following->id]);
@@ -50,14 +50,14 @@ class FollowTest extends TestCase
     {
         Notification::fake();
 
-        $follower  = User::factory()->withPersonalTeam()->create();
+        $follower = User::factory()->withPersonalTeam()->create();
         $following = User::factory()->withPersonalTeam()->create();
         PulseProfile::factory()->create(['user_id' => $follower->id]);
         PulseProfile::factory()->create(['user_id' => $following->id]);
 
         $this->actingAs($follower)->postJson("/api/v1/users/{$following->id}/follow");
 
-        Notification::assertSentTo($following, \App\Notifications\NewFollower::class);
+        Notification::assertSentTo($following, NewFollower::class);
     }
 
     public function test_user_cannot_follow_themselves(): void

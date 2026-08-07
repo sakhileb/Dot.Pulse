@@ -27,17 +27,17 @@ class PulseProfileFactory extends Factory
         ];
 
         return [
-            'user_id'           => User::factory(),
-            'headline'          => fake()->sentence(6),
-            'bio'               => fake()->paragraph(2),
-            'location'          => fake()->city() . ', ' . fake()->countryCode(),
-            'website'           => fake()->boolean(40) ? fake()->url() : null,
-            'skills'            => fake()->randomElement($skillSets),
-            'expertise_tags'    => [],
-            'role'              => fake()->randomElement($roles),
-            'community_points'  => fake()->numberBetween(0, 2500),
-            'solutions_accepted'=> fake()->numberBetween(0, 30),
-            'is_verified'       => fake()->boolean(15),
+            'user_id' => User::factory(),
+            'headline' => fake()->sentence(6),
+            'bio' => fake()->paragraph(2),
+            'location' => fake()->city().', '.fake()->countryCode(),
+            'website' => fake()->boolean(40) ? fake()->url() : null,
+            'skills' => fake()->randomElement($skillSets),
+            'expertise_tags' => [],
+            'role' => fake()->randomElement($roles),
+            'community_points' => fake()->numberBetween(0, 2500),
+            'solutions_accepted' => fake()->numberBetween(0, 30),
+            'is_verified' => fake()->boolean(15),
         ];
     }
 }

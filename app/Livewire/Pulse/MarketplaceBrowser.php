@@ -4,13 +4,15 @@ namespace App\Livewire\Pulse;
 
 use App\Models\PulseMarketplaceItem;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\View\View;
 use Livewire\Attributes\Computed;
 use Livewire\Component;
-use Illuminate\Support\Facades\Auth;
 
 class MarketplaceBrowser extends Component
 {
-    public string $search   = '';
+    public string $search = '';
+
     public string $category = '';
 
     public static array $categories = [
@@ -25,8 +27,8 @@ class MarketplaceBrowser extends Component
             ->where('is_published', true)
             ->when($this->category, fn ($q) => $q->where('category', $this->category))
             ->when($this->search, fn ($q) => $q->where(function ($b) {
-                $b->where('title', 'ilike', '%' . $this->search . '%')
-                    ->orWhere('description', 'ilike', '%' . $this->search . '%');
+                $b->where('title', 'ilike', '%'.$this->search.'%')
+                    ->orWhere('description', 'ilike', '%'.$this->search.'%');
             }))
             ->orderByDesc('installs_count')
             ->limit(24)
@@ -47,7 +49,7 @@ class MarketplaceBrowser extends Component
         unset($this->items);
     }
 
-    public function render(): \Illuminate\View\View
+    public function render(): View
     {
         return view('livewire.pulse.marketplace-browser');
     }

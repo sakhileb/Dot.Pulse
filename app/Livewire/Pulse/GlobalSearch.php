@@ -5,7 +5,7 @@ namespace App\Livewire\Pulse;
 use App\Models\Community;
 use App\Models\PulsePost;
 use App\Models\User;
-use Illuminate\Support\Collection;
+use Illuminate\View\View;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Url;
 use Livewire\Component;
@@ -24,7 +24,7 @@ class GlobalSearch extends Component
             return ['posts' => collect(), 'communities' => collect(), 'users' => collect()];
         }
 
-        $q = '%' . $this->query . '%';
+        $q = '%'.$this->query.'%';
 
         return [
             'posts' => PulsePost::with(['author', 'community'])
@@ -57,7 +57,7 @@ class GlobalSearch extends Component
         $this->tab = $tab;
     }
 
-    public function render(): \Illuminate\View\View
+    public function render(): View
     {
         return view('livewire.pulse.global-search');
     }

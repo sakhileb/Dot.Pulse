@@ -17,12 +17,12 @@ class PulseCommentFactory extends Factory
     public function definition(): array
     {
         return [
-            'pulse_post_id'  => PulsePost::factory(),
-            'user_id'        => User::factory(),
-            'parent_id'      => null,
-            'body'           => fake()->paragraphs(fake()->numberBetween(1, 2), true),
-            'is_solution'    => false,
-            'reactions_count'=> fake()->numberBetween(0, 15),
+            'pulse_post_id' => PulsePost::factory(),
+            'user_id' => User::factory(),
+            'parent_id' => null,
+            'body' => fake()->paragraphs(fake()->numberBetween(1, 2), true),
+            'is_solution' => false,
+            'reactions_count' => fake()->numberBetween(0, 15),
         ];
     }
 }

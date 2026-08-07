@@ -44,6 +44,7 @@ class CommunityPolicy
     private function isGlobalAdmin(User $user): bool
     {
         $profile = PulseProfile::where('user_id', $user->id)->first();
+
         return $profile && $profile->role === 'admin';
     }
 }

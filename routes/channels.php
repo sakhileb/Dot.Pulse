@@ -1,10 +1,11 @@
 <?php
 
+use App\Models\PulseConversation;
 use Illuminate\Support\Facades\Broadcast;
 
 // Private channel: conversation participants only
 Broadcast::channel('conversation.{conversationId}', function ($user, int $conversationId) {
-    return \App\Models\PulseConversation::where('id', $conversationId)
+    return PulseConversation::where('id', $conversationId)
         ->whereHas('participants', fn ($q) => $q->where('user_id', $user->id))
         ->exists();
 });

@@ -5,9 +5,10 @@ namespace App\Livewire\Pulse;
 use App\Models\Community;
 use App\Models\CommunityMembership;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\View\View;
 use Livewire\Attributes\Computed;
 use Livewire\Component;
-use Illuminate\Support\Facades\Auth;
 
 class CommunityList extends Component
 {
@@ -18,9 +19,8 @@ class CommunityList extends Component
     {
         return Community::withCount('memberships')
             ->where('visibility', 'public')
-            ->when($this->search, fn ($q) => $q->where(fn ($q) =>
-                $q->where('name', 'like', '%' . $this->search . '%')
-                  ->orWhere('industry', 'like', '%' . $this->search . '%')
+            ->when($this->search, fn ($q) => $q->where(fn ($q) => $q->where('name', 'like', '%'.$this->search.'%')
+                ->orWhere('industry', 'like', '%'.$this->search.'%')
             ))
             ->orderByDesc('members_count')
             ->limit(24)
@@ -37,8 +37,8 @@ class CommunityList extends Component
 
         CommunityMembership::create([
             'community_id' => $communityId,
-            'user_id'      => Auth::id(),
-            'role'         => 'member',
+            'user_id' => Auth::id(),
+            'role' => 'member',
         ]);
 
         $community->increment('members_count');
@@ -57,7 +57,7 @@ class CommunityList extends Component
         unset($this->communities);
     }
 
-    public function render(): \Illuminate\View\View
+    public function render(): View
     {
         return view('livewire.pulse.community-list');
     }

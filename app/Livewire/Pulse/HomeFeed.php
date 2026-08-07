@@ -3,15 +3,14 @@
 namespace App\Livewire\Pulse;
 
 use App\Models\PulsePost;
-use App\Models\PulseReaction;
 use App\Notifications\PostReacted;
-use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\View\View;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\On;
 use Livewire\Component;
 use Livewire\WithPagination;
-use Illuminate\Support\Facades\Auth;
 
 class HomeFeed extends Component
 {
@@ -47,7 +46,7 @@ class HomeFeed extends Component
 
     public function react(int $postId, string $emoji = '👍'): void
     {
-        if (! RateLimiter::attempt('pulse-reaction:' . Auth::id(), 30, fn () => true)) {
+        if (! RateLimiter::attempt('pulse-reaction:'.Auth::id(), 30, fn () => true)) {
             return;
         }
 
@@ -71,7 +70,7 @@ class HomeFeed extends Component
         unset($this->posts);
     }
 
-    public function render(): \Illuminate\View\View
+    public function render(): View
     {
         return view('livewire.pulse.home-feed');
     }

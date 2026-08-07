@@ -34,11 +34,11 @@ class PostPublished implements ShouldBroadcast
     public function broadcastWith(): array
     {
         return [
-            'id'           => $this->post->id,
-            'type'         => $this->post->type,
-            'title'        => $this->post->title,
+            'id' => $this->post->id,
+            'type' => $this->post->type,
+            'title' => $this->post->title,
             'community_id' => $this->post->community_id,
-            'author'       => $this->post->author->name,
+            'author' => $this->post->author->name,
         ];
     }
 }

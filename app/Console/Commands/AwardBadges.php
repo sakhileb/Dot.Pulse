@@ -8,7 +8,8 @@ use Illuminate\Console\Command;
 
 class AwardBadges extends Command
 {
-    protected $signature   = 'pulse:badges';
+    protected $signature = 'pulse:badges';
+
     protected $description = 'Run badge eligibility checks for all active users.';
 
     public function handle(BadgeAwarder $awarder): int

@@ -11,24 +11,29 @@ use App\Models\PulsePoll;
 use App\Models\PulsePost;
 use App\Models\PulseReaction;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\View\View;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\On;
 use Livewire\Component;
-use Illuminate\Support\Facades\Auth;
 
 class PostDetail extends Component
 {
     public PulsePost $post;
 
-    public string $commentBody  = '';
-    public ?int   $replyingTo   = null;
-    public string $replyBody    = '';
+    public string $commentBody = '';
+
+    public ?int $replyingTo = null;
+
+    public string $replyBody = '';
 
     // Reporting
-    public bool   $showReport   = false;
+    public bool $showReport = false;
+
     public string $reportReason = '';
-    public string $reportDetails= '';
+
+    public string $reportDetails = '';
 
     public function mount(PulsePost $post): void
     {
@@ -92,7 +97,7 @@ class PostDetail extends Component
         app(AddComment::class)->handle(
             postId: $this->post->id,
             userId: Auth::id(),
-            body:   $this->commentBody,
+            body: $this->commentBody,
         );
 
         $this->commentBody = '';
@@ -105,13 +110,13 @@ class PostDetail extends Component
         $this->validate(['replyBody' => 'required|min:2|max:5000']);
 
         app(AddComment::class)->handle(
-            postId:   $this->post->id,
-            userId:   Auth::id(),
-            body:     $this->replyBody,
+            postId: $this->post->id,
+            userId: Auth::id(),
+            body: $this->replyBody,
             parentId: $this->replyingTo,
         );
 
-        $this->replyBody  = '';
+        $this->replyBody = '';
         $this->replyingTo = null;
         unset($this->comments);
         $this->post->refresh();
@@ -119,7 +124,7 @@ class PostDetail extends Component
 
     public function react(string $morphType, int $morphId, string $emoji = '👍'): void
     {
-        if (! RateLimiter::attempt('pulse-reaction:' . Auth::id(), 30, fn () => true)) {
+        if (! RateLimiter::attempt('pulse-reaction:'.Auth::id(), 30, fn () => true)) {
             return;
         }
 
@@ -140,10 +145,10 @@ class PostDetail extends Component
             }
         } else {
             PulseReaction::create([
-                'user_id'        => $user->id,
+                'user_id' => $user->id,
                 'reactable_type' => $morphType,
-                'reactable_id'   => $morphId,
-                'emoji'          => $emoji,
+                'reactable_id' => $morphId,
+                'emoji' => $emoji,
             ]);
             if ($morphType === PulsePost::class) {
                 $this->post->increment('reactions_count');
@@ -175,7 +180,7 @@ class PostDetail extends Component
     public function setReplyingTo(?int $commentId): void
     {
         $this->replyingTo = $commentId;
-        $this->replyBody  = '';
+        $this->replyBody = '';
     }
 
     public function submitReport(): void
@@ -186,18 +191,18 @@ class PostDetail extends Component
 
         app(ReportContent::class)->handle(
             reporterId: Auth::id(),
-            morphType:  PulsePost::class,
-            morphId:    $this->post->id,
-            reason:     $this->reportReason,
-            details:    $this->reportDetails,
+            morphType: PulsePost::class,
+            morphId: $this->post->id,
+            reason: $this->reportReason,
+            details: $this->reportDetails,
         );
 
-        $this->showReport   = false;
+        $this->showReport = false;
         $this->reportReason = '';
-        $this->reportDetails= '';
+        $this->reportDetails = '';
     }
 
-    public function render(): \Illuminate\View\View
+    public function render(): View
     {
         return view('livewire.pulse.post-detail');
     }

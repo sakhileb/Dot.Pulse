@@ -20,7 +20,7 @@ class FollowUser
 
         // Rate limiting
         abort_unless(
-            RateLimiter::attempt('pulse-follow:' . $follower->id, 20, fn () => true),
+            RateLimiter::attempt('pulse-follow:'.$follower->id, 20, fn () => true),
             429,
             'Too many follow actions. Please slow down.',
         );
@@ -31,11 +31,12 @@ class FollowUser
 
         if ($existing) {
             $existing->delete();
+
             return false;
         }
 
         PulseFollower::create([
-            'follower_id'  => $follower->id,
+            'follower_id' => $follower->id,
             'following_id' => $following->id,
         ]);
 

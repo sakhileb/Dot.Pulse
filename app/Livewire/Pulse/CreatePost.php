@@ -7,29 +7,35 @@ use App\Models\Community;
 use App\Models\PulsePost;
 use App\Models\PulseProfile;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\View\View;
 use Livewire\Attributes\Computed;
 use Livewire\Component;
 use Livewire\WithFileUploads;
-use Illuminate\Support\Facades\Auth;
 
 class CreatePost extends Component
 {
     use WithFileUploads;
 
-    public string $type        = 'discussion';
-    public string $title       = '';
-    public string $body        = '';
-    public ?int   $communityId = null;
-    public bool   $showForm    = false;
-    public mixed  $attachment  = null;
+    public string $type = 'discussion';
+
+    public string $title = '';
+
+    public string $body = '';
+
+    public ?int $communityId = null;
+
+    public bool $showForm = false;
+
+    public mixed $attachment = null;
 
     protected array $rules = [
-        'type'        => 'required|string|in:discussion,announcement,question,idea,bug_report,release,success_story,showcase,tutorial,agent,integration,event,article,poll,video,job,marketplace',
-        'title'       => 'nullable|string|max:200',
-        'body'        => 'required|string|min:10|max:10000',
+        'type' => 'required|string|in:discussion,announcement,question,idea,bug_report,release,success_story,showcase,tutorial,agent,integration,event,article,poll,video,job,marketplace',
+        'title' => 'nullable|string|max:200',
+        'body' => 'required|string|min:10|max:10000',
         'communityId' => 'nullable|exists:communities,id',
-        'attachment'  => 'nullable|file|max:10240|mimes:jpg,jpeg,png,gif,webp,pdf,mp4',
+        'attachment' => 'nullable|file|max:10240|mimes:jpg,jpeg,png,gif,webp,pdf,mp4',
     ];
 
     #[Computed]
@@ -46,13 +52,14 @@ class CreatePost extends Component
     {
         // Rate limiting
         $executed = RateLimiter::attempt(
-            'pulse-post:' . Auth::id(),
+            'pulse-post:'.Auth::id(),
             $perHour = 10,
             function () {},
         );
 
         if (! $executed) {
             $this->addError('body', 'You are posting too fast. Please wait a moment before creating another post.');
+
             return;
         }
 
@@ -64,13 +71,13 @@ class CreatePost extends Component
         }
 
         $post = PulsePost::create([
-            'user_id'      => Auth::id(),
+            'user_id' => Auth::id(),
             'community_id' => $this->communityId ?: null,
-            'team_id'      => Auth::user()->currentTeam?->id,
-            'type'         => $this->type,
-            'title'        => $this->title ?: null,
-            'body'         => $this->body,
-            'status'       => 'pending',
+            'team_id' => Auth::user()->currentTeam?->id,
+            'type' => $this->type,
+            'title' => $this->title ?: null,
+            'body' => $this->body,
+            'status' => 'pending',
         ]);
 
         // Award 5 points for creating a post
@@ -84,9 +91,8 @@ class CreatePost extends Component
         $this->dispatch('post-created');
     }
 
-    public function render(): \Illuminate\View\View
+    public function render(): View
     {
         return view('livewire.pulse.create-post');
     }
 }
-

@@ -3,12 +3,8 @@
 namespace Tests\Feature\Pulse;
 
 use App\Jobs\EnrichPost;
-use App\Models\Community;
-use App\Models\CommunityMembership;
 use App\Models\PulsePost;
 use App\Models\PulseProfile;
-use App\Models\PulseReaction;
-use App\Models\Team;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Queue;
@@ -98,7 +94,7 @@ class PostTest extends TestCase
     public function test_user_cannot_delete_another_users_post(): void
     {
         $other = User::factory()->withPersonalTeam()->create();
-        $post  = PulsePost::factory()->create(['user_id' => $other->id, 'status' => 'published']);
+        $post = PulsePost::factory()->create(['user_id' => $other->id, 'status' => 'published']);
 
         $this->actingAs($this->user)
             ->deleteJson("/api/v1/posts/{$post->id}")
@@ -115,9 +111,9 @@ class PostTest extends TestCase
             ->assertJsonPath('reacted', true);
 
         $this->assertDatabaseHas('pulse_reactions', [
-            'user_id'        => $this->user->id,
+            'user_id' => $this->user->id,
             'reactable_type' => PulsePost::class,
-            'reactable_id'   => $post->id,
+            'reactable_id' => $post->id,
         ]);
     }
 
@@ -142,10 +138,10 @@ class PostTest extends TestCase
             ->assertCreated();
 
         $this->assertDatabaseHas('pulse_reports', [
-            'reporter_id'    => $this->user->id,
-            'reportable_type'=> PulsePost::class,
-            'reportable_id'  => $post->id,
-            'status'         => 'open',
+            'reporter_id' => $this->user->id,
+            'reportable_type' => PulsePost::class,
+            'reportable_id' => $post->id,
+            'status' => 'open',
         ]);
     }
 

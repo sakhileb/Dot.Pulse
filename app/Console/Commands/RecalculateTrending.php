@@ -9,7 +9,8 @@ use Illuminate\Support\Facades\DB;
 
 class RecalculateTrending extends Command
 {
-    protected $signature   = 'pulse:trending';
+    protected $signature = 'pulse:trending';
+
     protected $description = 'Recalculate trending hashtag post counts and bust cache.';
 
     public function handle(): int
@@ -29,7 +30,7 @@ class RecalculateTrending extends Command
 
         Cache::forget('pulse:trending_hashtags');
 
-        $this->info('Done. Updated ' . $counts->count() . ' hashtags.');
+        $this->info('Done. Updated '.$counts->count().' hashtags.');
 
         return self::SUCCESS;
     }
