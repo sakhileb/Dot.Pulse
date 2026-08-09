@@ -16,14 +16,14 @@ class PulsePostEnrichment extends Model
     ];
 
     protected $casts = [
-        'tags'               => 'array',
-        'topics'             => 'array',
-        'keywords'           => 'array',
-        'duplicate_score'    => 'float',
-        'spam_score'         => 'float',
-        'safety_score'       => 'float',
+        'tags' => 'array',
+        'topics' => 'array',
+        'keywords' => 'array',
+        'duplicate_score' => 'float',
+        'spam_score' => 'float',
+        'safety_score' => 'float',
         'business_relevance' => 'float',
-        'community_score'    => 'float',
+        'community_score' => 'float',
     ];
 
     public function post(): BelongsTo
@@ -39,5 +39,10 @@ class PulsePostEnrichment extends Model
     public function isFlagged(): bool
     {
         return $this->moderation_status === 'flagged';
+    }
+
+    public function isRejected(): bool
+    {
+        return $this->moderation_status === 'rejected';
     }
 }

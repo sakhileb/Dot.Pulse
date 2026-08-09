@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\PulseModerationLog;
 use App\Models\PulsePost;
 use App\Models\PulsePostEnrichment;
 
@@ -9,7 +10,7 @@ class AiModerationService
 {
     public function __construct(
         private readonly string $apiKey = '',
-        private readonly bool   $mock   = false,
+        private readonly bool $mock = false,
     ) {}
 
     /**
@@ -29,23 +30,23 @@ class AiModerationService
         $ch = curl_init('https://api.anthropic.com/v1/messages');
         curl_setopt_array($ch, [
             CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_POST           => true,
-            CURLOPT_HTTPHEADER     => [
+            CURLOPT_POST => true,
+            CURLOPT_HTTPHEADER => [
                 'Content-Type: application/json',
-                'x-api-key: ' . $this->apiKey,
+                'x-api-key: '.$this->apiKey,
                 'anthropic-version: 2023-06-01',
             ],
             CURLOPT_POSTFIELDS => json_encode([
-                'model'      => 'claude-sonnet-4-6',
+                'model' => 'claude-sonnet-4-6',
                 'max_tokens' => 512,
-                'messages'   => [[
-                    'role'    => 'user',
+                'messages' => [[
+                    'role' => 'user',
                     'content' => $this->buildPrompt($post),
                 ]],
             ]),
         ]);
 
-        $body     = curl_exec($ch);
+        $body = curl_exec($ch);
         $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
         curl_close($ch);
 
@@ -94,47 +95,70 @@ PROMPT;
     private function mockEnrichment(PulsePost $post): PulsePostEnrichment
     {
         return $this->upsertEnrichment($post, [
-            'summary'              => 'A community post shared on Dot.Pulse.',
-            'tags'                 => ['community', $post->type],
-            'sentiment'            => 'positive',
-            'topics'               => ['business', 'community'],
-            'keywords'             => [],
-            'language'             => 'en',
-            'spam_score'           => 0.0,
-            'safety_score'         => 1.0,
-            'business_relevance'   => 0.7,
-            'community_score'      => 0.6,
-            'moderation_status'    => 'approved',
+            'summary' => 'A community post shared on Dot.Pulse.',
+            'tags' => ['community', $post->type],
+            'sentiment' => 'positive',
+            'topics' => ['business', 'community'],
+            'keywords' => [],
+            'language' => 'en',
+            'spam_score' => 0.0,
+            'safety_score' => 1.0,
+            'business_relevance' => 0.7,
+            'community_score' => 0.6,
+            'moderation_status' => 'approved',
             'moderation_rationale' => null,
         ]);
     }
 
-    private function upsertEnrichment(PulsePost $post, array $data): PulsePostEnrichment
+    public function upsertEnrichment(PulsePost $post, array $data): PulsePostEnrichment
     {
         $enrichment = PulsePostEnrichment::updateOrCreate(
             ['pulse_post_id' => $post->id],
             [
-                'summary'              => $data['summary'] ?? null,
-                'tags'                 => $data['tags'] ?? [],
-                'sentiment'            => $data['sentiment'] ?? 'neutral',
-                'topics'               => $data['topics'] ?? [],
-                'keywords'             => $data['keywords'] ?? [],
-                'language'             => $data['language'] ?? 'en',
-                'spam_score'           => $data['spam_score'] ?? 0.0,
-                'safety_score'         => $data['safety_score'] ?? 1.0,
-                'business_relevance'   => $data['business_relevance'] ?? 0.5,
-                'community_score'      => $data['community_score'] ?? 0.5,
-                'moderation_status'    => $data['moderation_status'] ?? 'approved',
+                'summary' => $data['summary'] ?? null,
+                'tags' => $data['tags'] ?? [],
+                'sentiment' => $data['sentiment'] ?? 'neutral',
+                'topics' => $data['topics'] ?? [],
+                'keywords' => $data['keywords'] ?? [],
+                'language' => $data['language'] ?? 'en',
+                'spam_score' => $data['spam_score'] ?? 0.0,
+                'safety_score' => $data['safety_score'] ?? 1.0,
+                'business_relevance' => $data['business_relevance'] ?? 0.5,
+                'community_score' => $data['community_score'] ?? 0.5,
+                'moderation_status' => $data['moderation_status'] ?? 'approved',
                 'moderation_rationale' => $data['moderation_rationale'] ?? null,
             ]
         );
 
         if ($enrichment->moderation_status === 'approved' && $post->status === 'pending') {
             $post->update(['status' => 'published']);
-        } elseif ($enrichment->moderation_status === 'rejected') {
-            $post->update(['status' => 'removed']);
+            $this->logAiDecision($post, 'approve', $enrichment->moderation_rationale);
+        } elseif (in_array($enrichment->moderation_status, ['rejected', 'flagged'], true)) {
+            // Both a rejected classification and an unsure ("flagged") one now hold the
+            // post for human review instead of taking effect immediately -- 'rejected' no
+            // longer auto-removes, and 'flagged' no longer silently does nothing.
+            // status: 'flagged' is the pre-existing enum value that was earmarked for
+            // exactly this held-for-review state but never actually set by any code.
+            $post->update(['status' => 'flagged']);
+            $this->logAiDecision(
+                $post,
+                $enrichment->moderation_status === 'rejected' ? 'reject' : 'flag',
+                $enrichment->moderation_rationale,
+            );
         }
 
         return $enrichment;
+    }
+
+    private function logAiDecision(PulsePost $post, string $action, ?string $rationale): void
+    {
+        PulseModerationLog::create([
+            'moderator_id' => null,
+            'target_type' => PulsePost::class,
+            'target_id' => $post->id,
+            'action' => $action,
+            'rationale' => $rationale,
+            'is_ai_decision' => true,
+        ]);
     }
 }
