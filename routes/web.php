@@ -17,16 +17,18 @@ Route::middleware([
     'verified',
 ])->group(function () {
     Route::get('/dashboard', function () {
-        $user    = auth()->user();
+        $user = auth()->user();
         $profile = PulseProfile::firstOrCreate(
             ['user_id' => $user->id],
             ['role' => 'customer'],
         );
 
         return view('dashboard', [
-            'totalPosts'       => PulsePost::published()->count(),
+            'totalPosts' => PulsePost::published()->count(),
             'totalCommunities' => Community::count(),
-            'myPoints'         => $profile->community_points,
+            'myPoints' => $profile->community_points,
         ]);
     })->name('dashboard');
+
+    Route::get('/moderation', fn () => view('pulse.moderation'))->name('moderation');
 });
