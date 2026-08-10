@@ -1,1 +1,1 @@
-<img src="{{ asset('images/logo.png') }}" alt="Dot.Pulse" {{ $attributes }}>
+<img src="{{ asset('images/mark.png') }}" alt="Dot.Pulse" {{ $attributes }}>
