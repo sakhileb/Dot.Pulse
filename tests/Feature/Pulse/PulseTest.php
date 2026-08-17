@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Pulse;
 
+use App\Livewire\Pulse\FollowButton;
 use App\Models\Community;
 use App\Models\CommunityMembership;
 use App\Models\PulsePost;
@@ -37,6 +38,23 @@ class PulseTest extends TestCase
             ->get('/dashboard')
             ->assertOk()
             ->assertViewIs('dashboard');
+    }
+
+    public function test_the_dashboard_feed_embeds_a_follow_button_for_another_authors_post(): void
+    {
+        $author = User::factory()->withPersonalTeam()->create();
+
+        PulsePost::create([
+            'user_id' => $author->id,
+            'team_id' => $author->currentTeam->id,
+            'type'    => 'discussion',
+            'body'    => 'A post from someone else',
+            'status'  => 'published',
+        ]);
+
+        $this->actingAs($this->user)
+            ->get('/dashboard')
+            ->assertSeeLivewire(FollowButton::class);
     }
 
     public function test_dashboard_creates_profile_if_missing(): void
