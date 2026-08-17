@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Pulse;
 
+use App\Events\PostPublished;
 use App\Livewire\Pulse\ModerationQueue;
 use App\Models\PulsePost;
 use App\Models\PulsePostEnrichment;
@@ -9,6 +10,7 @@ use App\Models\PulseProfile;
 use App\Models\User;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Event;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -16,14 +18,14 @@ class ModerationQueueTest extends TestCase
 {
     use RefreshDatabase;
 
-    private function heldPost(string $moderationStatus = 'rejected'): PulsePost
+    private function heldPost(string $moderationStatus = 'rejected', string $body = 'A post awaiting moderation.'): PulsePost
     {
         $author = User::factory()->withPersonalTeam()->create();
         $post = PulsePost::create([
             'user_id' => $author->id,
             'team_id' => $author->currentTeam->id,
             'type' => 'discussion',
-            'body' => 'A post awaiting moderation.',
+            'body' => $body,
             'status' => 'flagged',
         ]);
         PulsePostEnrichment::create([
@@ -45,7 +47,9 @@ class ModerationQueueTest extends TestCase
 
     public function test_moderator_can_approve_a_held_post(): void
     {
-        $post = $this->heldPost();
+        Event::fake([PostPublished::class]);
+
+        $post = $this->heldPost(body: 'A post about #dotagents awaiting moderation.');
         $moderator = $this->moderator();
 
         Livewire::actingAs($moderator)
@@ -60,6 +64,8 @@ class ModerationQueueTest extends TestCase
             'is_ai_decision' => false,
             'moderator_id' => $moderator->id,
         ]);
+        Event::assertDispatched(PostPublished::class, fn ($event) => $event->post->is($post));
+        $this->assertDatabaseHas('pulse_hashtags', ['name' => 'dotagents']);
     }
 
     public function test_moderator_can_reject_with_a_reason(): void

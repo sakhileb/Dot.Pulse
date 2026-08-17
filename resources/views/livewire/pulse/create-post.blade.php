@@ -1,26 +1,27 @@
-<div class="bg-white rounded-xl shadow p-5 mb-6">
+<div class="dot-card" style="padding:1.25rem 1.5rem;">
     <button
         wire:click="$toggle('showForm')"
-        class="w-full text-left text-sm text-gray-400 border border-gray-200 rounded-lg px-4 py-3 hover:border-indigo-300 hover:text-gray-600 transition-colors"
+        class="dot-input"
+        style="text-align:left;cursor:pointer;color:#71717a;"
     >
         Share something with the community...
     </button>
 
     @if($showForm)
-        <form wire:submit="publish" class="mt-4 space-y-3">
-            <div class="grid grid-cols-2 gap-3">
+        <form wire:submit="publish" style="margin-top:1rem;display:flex;flex-direction:column;gap:0.9rem;">
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;">
                 <div>
-                    <label class="block text-xs text-gray-500 mb-1">Type</label>
-                    <select wire:model="type" class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                    <label style="display:block;font-size:12px;font-weight:600;color:#a1a1aa;margin-bottom:6px;">Type</label>
+                    <select wire:model="type" class="dot-input">
                         @foreach(\App\Models\PulsePost::$types as $t)
                             <option value="{{ $t }}">{{ ucfirst(str_replace('_', ' ', $t)) }}</option>
                         @endforeach
                     </select>
-                    @error('type') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                    @error('type') <p style="color:#f87171;font-size:11px;margin:4px 0 0;">{{ $message }}</p> @enderror
                 </div>
                 <div>
-                    <label class="block text-xs text-gray-500 mb-1">Community (optional)</label>
-                    <select wire:model="communityId" class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                    <label style="display:block;font-size:12px;font-weight:600;color:#a1a1aa;margin-bottom:6px;">Community (optional)</label>
+                    <select wire:model="communityId" class="dot-input">
                         <option value="">No community</option>
                         @foreach($this->communities as $community)
                             <option value="{{ $community->id }}">{{ $community->name }}</option>
@@ -30,26 +31,24 @@
             </div>
 
             <div>
-                <label class="block text-xs text-gray-500 mb-1">Title (optional)</label>
-                <input wire:model="title" type="text" placeholder="Give your post a title..." class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none" />
-                @error('title') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                <label style="display:block;font-size:12px;font-weight:600;color:#a1a1aa;margin-bottom:6px;">Title (optional)</label>
+                <input wire:model="title" type="text" placeholder="Give your post a title..." class="dot-input" />
+                @error('title') <p style="color:#f87171;font-size:11px;margin:4px 0 0;">{{ $message }}</p> @enderror
             </div>
 
             <div>
-                <label class="block text-xs text-gray-500 mb-1">Content</label>
-                <textarea wire:model="body" rows="4" placeholder="What do you want to share?" class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none resize-none"></textarea>
-                @error('body') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                <label style="display:block;font-size:12px;font-weight:600;color:#a1a1aa;margin-bottom:6px;">Content</label>
+                <textarea wire:model="body" rows="4" placeholder="What do you want to share?" class="dot-input"></textarea>
+                @error('body') <p style="color:#f87171;font-size:11px;margin:4px 0 0;">{{ $message }}</p> @enderror
             </div>
 
-            <div class="flex items-center gap-3 pt-1">
-                <button type="submit"
-                    class="bg-indigo-600 text-white px-5 py-2 rounded-lg text-sm font-medium hover:bg-indigo-700 disabled:opacity-50"
-                    wire:loading.attr="disabled">
+            <div style="display:flex;align-items:center;gap:14px;padding-top:2px;">
+                <button type="submit" class="dot-btn dot-btn-primary" wire:loading.attr="disabled" style="opacity:1;">
                     <span wire:loading.remove>Publish</span>
-                    <span wire:loading>Processing...</span>
+                    <span wire:loading>Processing…</span>
                 </button>
-                <button type="button" wire:click="$set('showForm', false)" class="text-sm text-gray-400 hover:text-gray-600">Cancel</button>
-                <span class="text-xs text-gray-300 ml-auto">AI moderation runs automatically</span>
+                <button type="button" wire:click="$set('showForm', false)" style="background:none;border:none;font-size:13px;color:#71717a;cursor:pointer;font-family:'Inter',sans-serif;">Cancel</button>
+                <span style="font-size:11px;color:#3f3f46;margin-left:auto;">AI moderation runs automatically</span>
             </div>
         </form>
     @endif

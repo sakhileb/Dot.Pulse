@@ -2,8 +2,10 @@
 
 namespace App\Livewire\Pulse;
 
+use App\Events\PostPublished;
 use App\Models\PulseModerationLog;
 use App\Models\PulsePost;
+use App\Services\HashtagExtractionService;
 use Illuminate\Support\Collection;
 use Illuminate\View\View;
 use Livewire\Attributes\Computed;
@@ -49,6 +51,18 @@ class ModerationQueue extends Component
             'rationale' => null,
             'is_ai_decision' => false,
         ]);
+
+        (new HashtagExtractionService)->extractAndAttach($post);
+
+        // ShouldBroadcast, not ShouldQueue -- the approval already persisted
+        // above, so a broadcast connection failure (Reverb down, network
+        // blip) is a lost real-time notice, not a lost moderation decision.
+        // Don't 500 the moderator's approve click over it.
+        try {
+            PostPublished::dispatch($post);
+        } catch (\Throwable $e) {
+            report($e);
+        }
 
         unset($this->heldPosts);
     }
