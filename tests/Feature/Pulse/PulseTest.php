@@ -3,6 +3,7 @@
 namespace Tests\Feature\Pulse;
 
 use App\Livewire\Pulse\FollowButton;
+use App\Livewire\Pulse\NotificationBell;
 use App\Models\Community;
 use App\Models\CommunityMembership;
 use App\Models\PulsePost;
@@ -55,6 +56,13 @@ class PulseTest extends TestCase
         $this->actingAs($this->user)
             ->get('/dashboard')
             ->assertSeeLivewire(FollowButton::class);
+    }
+
+    public function test_the_dashboard_layout_embeds_the_notification_bell(): void
+    {
+        $this->actingAs($this->user)
+            ->get('/dashboard')
+            ->assertSeeLivewire(NotificationBell::class);
     }
 
     public function test_dashboard_creates_profile_if_missing(): void
