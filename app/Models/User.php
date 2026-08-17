@@ -5,9 +5,11 @@ namespace App\Models;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Notifications\Notification;
 use Laravel\Fortify\TwoFactorAuthenticatable;
 use Laravel\Jetstream\HasProfilePhoto;
 use Laravel\Jetstream\HasTeams;
@@ -73,5 +75,52 @@ class User extends Authenticatable
     public function pulseProfile(): HasOne
     {
         return $this->hasOne(PulseProfile::class);
+    }
+
+    /**
+     * pulse_followers has existed since the platform's first migration
+     * (unique(follower_id, following_id)) with no relation ever declared
+     * on User and no UI reading or writing it — README advertises
+     * "follow users and communities" but nothing let a user follow
+     * anyone.
+     */
+    public function followers(): BelongsToMany
+    {
+        return $this->belongsToMany(self::class, 'pulse_followers', 'following_id', 'follower_id')->withTimestamps();
+    }
+
+    public function following(): BelongsToMany
+    {
+        return $this->belongsToMany(self::class, 'pulse_followers', 'follower_id', 'following_id')->withTimestamps();
+    }
+
+    public function isFollowing(self $user): bool
+    {
+        return $this->following()->where('users.id', $user->id)->exists();
+    }
+
+    /**
+     * Mirrors Community::members() -- lets HomeFeed's Following tab merge
+     * in posts from communities the viewer has joined, not just posts
+     * from people they follow.
+     */
+    public function joinedCommunities(): BelongsToMany
+    {
+        return $this->belongsToMany(Community::class, 'community_memberships')->withTimestamps();
+    }
+
+    /**
+     * Overrides Laravel's default `App.Models.User.{id}` broadcast channel
+     * name so it matches this codebase's existing short-form convention
+     * (see App\Providers\BroadcastServiceProvider's post.{postId} channel)
+     * instead of mixing two naming schemes. The optional $notification
+     * parameter matches Laravel's real call site --
+     * Illuminate\Notifications\Events\BroadcastNotificationCreated::channelName()
+     * calls this with the notification instance -- even though it's
+     * unused today.
+     */
+    public function receivesBroadcastNotificationsOn(?Notification $notification = null): string
+    {
+        return 'user.'.$this->id;
     }
 }
