@@ -1,55 +1,54 @@
-<div class="max-w-3xl">
+<div style="max-width:760px;">
     @if($this->heldPosts->isEmpty())
-        <div class="bg-white rounded-xl shadow p-5 text-sm text-gray-400">
-            Nothing waiting for review.
+        <div class="dot-card" style="padding:2.5rem 1.5rem;text-align:center;">
+            <p style="font-size:13px;color:#71717a;margin:0;">Nothing waiting for review.</p>
         </div>
     @endif
 
     @foreach($this->heldPosts as $post)
-        <div class="bg-white rounded-xl shadow p-5 mb-4">
-            <div class="flex items-center justify-between mb-2">
+        <div class="dot-card" style="padding:1.25rem 1.5rem;margin-bottom:1rem;">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
                 <div>
-                    <p class="text-sm font-medium text-gray-800">{{ $post->author->name }}</p>
-                    <p class="text-xs text-gray-400">
+                    <p style="font-size:13.5px;font-weight:600;color:#f4f4f5;margin:0;">{{ $post->author->name }}</p>
+                    <p style="font-size:11.5px;color:#71717a;margin:2px 0 0;">
                         {{ $post->community?->name ?? 'No community' }} &middot; {{ ucfirst($post->type) }}
                     </p>
                 </div>
-                <span class="text-xs px-2 py-0.5 rounded-full {{ $post->enrichment?->isRejected() ? 'bg-red-100 text-red-600' : 'bg-yellow-100 text-yellow-700' }}">
+                <span class="dot-badge {{ $post->enrichment?->isRejected() ? 'dot-badge-danger' : 'dot-badge-accent' }}">
                     {{ $post->enrichment?->isRejected() ? 'AI recommended reject' : 'AI flagged for review' }}
                 </span>
             </div>
 
             @if($post->title)
-                <p class="text-sm font-semibold text-gray-800 mb-1">{{ $post->title }}</p>
+                <p style="font-family:'Syne',sans-serif;font-size:14.5px;font-weight:600;color:#f4f4f5;margin:0 0 4px;">{{ $post->title }}</p>
             @endif
-            <p class="text-sm text-gray-600 mb-3">{{ $post->body }}</p>
+            <p style="font-size:13px;color:#a1a1aa;line-height:1.6;margin:0 0 12px;">{{ $post->body }}</p>
 
             @if($post->enrichment)
-                <div class="text-xs text-gray-400 mb-3 space-y-1">
+                <div style="font-size:11.5px;color:#52525b;margin-bottom:12px;display:flex;flex-direction:column;gap:3px;">
                     @if($post->enrichment->moderation_rationale)
-                        <p>AI rationale: {{ $post->enrichment->moderation_rationale }}</p>
+                        <p style="margin:0;">AI rationale: {{ $post->enrichment->moderation_rationale }}</p>
                     @endif
-                    <p>Spam score: {{ number_format($post->enrichment->spam_score, 2) }} &middot; Safety score: {{ number_format($post->enrichment->safety_score, 2) }}</p>
+                    <p style="margin:0;">Spam score: {{ number_format($post->enrichment->spam_score, 2) }} &middot; Safety score: {{ number_format($post->enrichment->safety_score, 2) }}</p>
                 </div>
             @endif
 
             @if($rejectingPostId === $post->id)
-                <div class="flex items-center gap-2">
-                    <input type="text" wire:model="rejectReason" placeholder="Reason for rejecting"
-                        class="flex-1 border border-gray-300 rounded px-3 py-1.5 text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none" />
-                    <button wire:click="confirmReject({{ $post->id }})" class="text-xs px-3 py-1.5 rounded bg-red-600 hover:bg-red-700 text-white font-medium">
-                        Confirm Reject
+                <div style="display:flex;align-items:center;gap:10px;">
+                    <input type="text" wire:model="rejectReason" placeholder="Reason for rejecting" class="dot-input" style="flex:1;" />
+                    <button wire:click="confirmReject({{ $post->id }})" class="dot-btn" style="background:#e24b4a;color:#fff;flex-shrink:0;">
+                        Confirm reject
                     </button>
-                    <button wire:click="cancelReject" class="text-xs px-3 py-1.5 rounded bg-gray-200 hover:bg-gray-300 text-gray-700 font-medium">
+                    <button wire:click="cancelReject" class="dot-btn dot-btn-ghost" style="flex-shrink:0;">
                         Cancel
                     </button>
                 </div>
             @else
-                <div class="flex items-center gap-2">
-                    <button wire:click="approve({{ $post->id }})" class="text-xs px-3 py-1.5 rounded bg-green-600 hover:bg-green-700 text-white font-medium">
+                <div style="display:flex;align-items:center;gap:10px;">
+                    <button wire:click="approve({{ $post->id }})" class="dot-btn" style="background:#22c55e;color:#052e10;">
                         Approve
                     </button>
-                    <button wire:click="promptReject({{ $post->id }})" class="text-xs px-3 py-1.5 rounded bg-red-600 hover:bg-red-700 text-white font-medium">
+                    <button wire:click="promptReject({{ $post->id }})" class="dot-btn" style="background:#e24b4a;color:#fff;">
                         Reject
                     </button>
                 </div>

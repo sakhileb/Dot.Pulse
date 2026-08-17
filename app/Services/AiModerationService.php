@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Events\PostPublished;
 use App\Models\PulseModerationLog;
 use App\Models\PulsePost;
 use App\Models\PulsePostEnrichment;
@@ -133,6 +134,17 @@ PROMPT;
         if ($enrichment->moderation_status === 'approved' && $post->status === 'pending') {
             $post->update(['status' => 'published']);
             $this->logAiDecision($post, 'approve', $enrichment->moderation_rationale);
+            (new HashtagExtractionService)->extractAndAttach($post);
+
+            // ShouldBroadcast, not ShouldQueue -- the post is already published
+            // above, so a broadcast failure here (Reverb down, network blip)
+            // shouldn't 500 a brand-new post out from under the author who just
+            // published it.
+            try {
+                PostPublished::dispatch($post);
+            } catch (\Throwable $e) {
+                report($e);
+            }
         } elseif (in_array($enrichment->moderation_status, ['rejected', 'flagged'], true)) {
             // Both a rejected classification and an unsure ("flagged") one now hold the
             // post for human review instead of taking effect immediately -- 'rejected' no
