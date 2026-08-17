@@ -25,9 +25,16 @@
     @endif
 
     @if($this->posts->isEmpty())
-        <div class="dot-card" style="padding:3rem 1.5rem;text-align:center;">
-            <p style="font-size:13px;color:#71717a;margin:0;">No posts yet. Be the first to share something with the community.</p>
-        </div>
+        @if($followingOnly)
+            <div class="dot-card" style="padding:1.5rem;">
+                <p style="font-size:13px;color:#71717a;margin:0 0 1rem;text-align:center;">Follow people to see their posts here.</p>
+                <livewire:pulse.suggested-users />
+            </div>
+        @else
+            <div class="dot-card" style="padding:3rem 1.5rem;text-align:center;">
+                <p style="font-size:13px;color:#71717a;margin:0;">No posts yet. Be the first to share something with the community.</p>
+            </div>
+        @endif
     @else
         <div style="display:flex;flex-direction:column;gap:0.9rem;">
             @foreach($this->posts as $post)

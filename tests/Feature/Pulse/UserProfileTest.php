@@ -140,4 +140,17 @@ class UserProfileTest extends TestCase
             ->assertSee('Posted in a community I joined')
             ->assertDontSee('From a stranger, no community');
     }
+
+    public function test_the_empty_following_tab_shows_suggested_users_instead_of_the_generic_empty_state(): void
+    {
+        $viewer = User::factory()->withPersonalTeam()->create();
+        User::factory()->withPersonalTeam()->create(['name' => 'Suggested Person']);
+
+        Livewire::actingAs($viewer)
+            ->test(HomeFeed::class)
+            ->set('followingOnly', true)
+            ->assertDontSee('No posts yet. Be the first to share something with the community.')
+            ->assertSee('Follow people to see their posts here.')
+            ->assertSee('Suggested Person');
+    }
 }
