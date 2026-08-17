@@ -100,7 +100,7 @@
          styling. --}}
     @vite(['resources/js/app.js'])
 </head>
-<body>
+<body data-user-id="{{ auth()->id() }}">
     <x-banner />
 
     <aside class="sidebar">
