@@ -22,21 +22,26 @@
         </div>
         <div class="dot-card" style="padding:1.25rem 1.5rem;">
             <div style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.09em;color:#52525b;margin-bottom:0.75rem;">My Points</div>
-            <div class="metric-val" style="font-size:2rem;font-weight:600;color:#f59e0b;">{{ $myPoints }}</div>
+            <div class="metric-val" style="font-size:2rem;font-weight:600;color:var(--accent);">{{ $myPoints }}</div>
         </div>
     </div>
 
     {{-- Create Post --}}
     <livewire:pulse.create-post />
 
-    {{-- Feed --}}
-    <div style="margin-top:1.25rem;">
-        <livewire:pulse.home-feed />
-    </div>
+    <div style="display:grid;grid-template-columns:1fr 260px;gap:1.25rem;margin-top:1.25rem;align-items:start;">
+        <div>
+            {{-- Feed --}}
+            <livewire:pulse.home-feed />
 
-    {{-- Communities --}}
-    <div style="margin-top:1.5rem;">
-        <livewire:pulse.community-list />
+            {{-- Communities --}}
+            <div style="margin-top:1.5rem;">
+                <livewire:pulse.community-list />
+            </div>
+        </div>
+
+        {{-- Trending --}}
+        <livewire:pulse.trending-hashtags />
     </div>
 
 </div>
