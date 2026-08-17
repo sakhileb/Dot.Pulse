@@ -2,6 +2,8 @@
 
 namespace Tests\Feature\Pulse;
 
+use App\Livewire\Pulse\FollowButton;
+use App\Livewire\Pulse\NotificationBell;
 use App\Models\Community;
 use App\Models\CommunityMembership;
 use App\Models\PulsePost;
@@ -37,6 +39,30 @@ class PulseTest extends TestCase
             ->get('/dashboard')
             ->assertOk()
             ->assertViewIs('dashboard');
+    }
+
+    public function test_the_dashboard_feed_embeds_a_follow_button_for_another_authors_post(): void
+    {
+        $author = User::factory()->withPersonalTeam()->create();
+
+        PulsePost::create([
+            'user_id' => $author->id,
+            'team_id' => $author->currentTeam->id,
+            'type'    => 'discussion',
+            'body'    => 'A post from someone else',
+            'status'  => 'published',
+        ]);
+
+        $this->actingAs($this->user)
+            ->get('/dashboard')
+            ->assertSeeLivewire(FollowButton::class);
+    }
+
+    public function test_the_dashboard_layout_embeds_the_notification_bell(): void
+    {
+        $this->actingAs($this->user)
+            ->get('/dashboard')
+            ->assertSeeLivewire(NotificationBell::class);
     }
 
     public function test_dashboard_creates_profile_if_missing(): void
@@ -107,6 +133,29 @@ class PulseTest extends TestCase
         ]);
 
         $this->assertTrue($community->hasMember($this->user));
+    }
+
+    public function test_user_has_joined_communities_relationship(): void
+    {
+        $community = Community::create([
+            'created_by' => $this->user->id,
+            'name'       => 'Mining Ops',
+            'slug'       => 'mining-ops',
+            'visibility' => 'public',
+        ]);
+
+        CommunityMembership::create([
+            'community_id' => $community->id,
+            'user_id'      => $this->user->id,
+            'role'         => 'member',
+        ]);
+
+        $this->assertTrue($this->user->joinedCommunities->contains($community));
+    }
+
+    public function test_a_user_receives_broadcast_notifications_on_their_own_short_form_channel(): void
+    {
+        $this->assertSame('user.'.$this->user->id, $this->user->receivesBroadcastNotificationsOn());
     }
 
     public function test_pulse_post_can_be_created(): void
