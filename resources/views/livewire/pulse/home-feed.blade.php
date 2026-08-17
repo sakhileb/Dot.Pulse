@@ -2,10 +2,10 @@
     <div class="flex items-center justify-between mb-4">
         <h3 style="font-family:'Syne',sans-serif;font-size:0.875rem;font-weight:700;color:#f4f4f5;">Community Feed</h3>
         <div class="flex items-center gap-3">
-            <label style="display:flex;align-items:center;gap:6px;font-size:12px;color:#a1a1aa;cursor:pointer;user-select:none;">
-                <input type="checkbox" wire:model.live="followingOnly" style="accent-color:#f1c62e;" />
-                Following only
-            </label>
+            <div style="display:flex;gap:4px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);border-radius:8px;padding:3px;">
+                <button wire:click="$set('followingOnly', false)" style="padding:5px 12px;border-radius:6px;border:none;font-size:12px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;background:{{ ! $followingOnly ? 'rgba(241,198,46,0.12)' : 'transparent' }};color:{{ ! $followingOnly ? '#f1c62e' : '#71717a' }};">For You</button>
+                <button wire:click="$set('followingOnly', true)" style="padding:5px 12px;border-radius:6px;border:none;font-size:12px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;background:{{ $followingOnly ? 'rgba(241,198,46,0.12)' : 'transparent' }};color:{{ $followingOnly ? '#f1c62e' : '#71717a' }};">Following</button>
+            </div>
             <select wire:model.live="filterType" class="dot-input" style="font-size:11px;padding:5px 10px;width:auto;">
                 <option value="">All types</option>
                 @foreach(\App\Models\PulsePost::$types as $type)

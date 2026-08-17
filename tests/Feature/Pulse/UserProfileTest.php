@@ -4,6 +4,8 @@ namespace Tests\Feature\Pulse;
 
 use App\Livewire\Pulse\HomeFeed;
 use App\Livewire\Pulse\UserProfile;
+use App\Models\Community;
+use App\Models\CommunityMembership;
 use App\Models\PulsePost;
 use App\Models\PulseProfile;
 use App\Models\User;
@@ -101,5 +103,41 @@ class UserProfileTest extends TestCase
             ->set('followingOnly', true)
             ->assertSee('From someone I follow')
             ->assertDontSee('From a stranger');
+    }
+
+    public function test_the_following_tab_also_includes_posts_from_joined_communities(): void
+    {
+        $viewer = User::factory()->withPersonalTeam()->create();
+
+        $community = Community::create([
+            'created_by' => $viewer->id,
+            'name'       => 'Fleet Ops',
+            'slug'       => 'fleet-ops',
+            'visibility' => 'public',
+        ]);
+        CommunityMembership::create([
+            'community_id' => $community->id,
+            'user_id'      => $viewer->id,
+            'role'         => 'member',
+        ]);
+
+        $communityPoster = User::factory()->withPersonalTeam()->create();
+        $stranger = User::factory()->withPersonalTeam()->create();
+
+        PulsePost::create([
+            'user_id' => $communityPoster->id, 'team_id' => $communityPoster->currentTeam->id,
+            'community_id' => $community->id, 'type' => 'discussion',
+            'body' => 'Posted in a community I joined', 'status' => 'published',
+        ]);
+        PulsePost::create([
+            'user_id' => $stranger->id, 'team_id' => $stranger->currentTeam->id,
+            'type' => 'discussion', 'body' => 'From a stranger, no community', 'status' => 'published',
+        ]);
+
+        Livewire::actingAs($viewer)
+            ->test(HomeFeed::class)
+            ->set('followingOnly', true)
+            ->assertSee('Posted in a community I joined')
+            ->assertDontSee('From a stranger, no community');
     }
 }
